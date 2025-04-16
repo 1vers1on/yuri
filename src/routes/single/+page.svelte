@@ -2,12 +2,13 @@
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
     import { goto } from "$app/navigation";
+    import { getPost } from "$lib/api";
 
     interface Post {
         id: number;
         title: string;
         tags: string[];
-        image: string;
+        filename: string;
         description?: string;
         uploadDate?: string;
         author?: string;
@@ -17,50 +18,29 @@
         id: 1,
         title: "Loading...",
         tags: [],
-        image: "",
+        filename: "",
     });
 
     let isLoading = $state(true);
     let notFound = $state(false);
-    let previousPath = "";
 
     function goBack() {
-        if (previousPath) {
-            goto(previousPath);
-        } else {
-            goto("/");
-        }
+        window.history.back();
+        setTimeout(() => goto(window.location.href), 100);
     }
 
     onMount(async () => {
-        const currentPath = window.location.pathname;
-        const referrer = document.referrer;
-
-        const isInternal = referrer.startsWith(window.location.origin);
-
-        if (isInternal) {
-            previousPath = new URL(referrer).pathname;
-        }
-
         if (!browser) return;
 
         try {
             const params = new URLSearchParams(window.location.search);
             const id = params.get("id");
 
-            // if (!id) {
-            //     notFound = true;
-            //     return;
-            // }
-
-            post = {
-                id: 1,
-                title: "test",
-                tags: ["test", "test"],
-                image: "https://placecats.com/800/600",
-                uploadDate: "2025-03-15",
-                author: "test",
-            };
+            if (!id) {
+                notFound = true;
+                return;
+            }
+            post = await getPost(id);
             isLoading = false;
         } catch (err) {
             console.error("Error fetching post:", err);
@@ -156,7 +136,12 @@
                 {/if}
 
                 <div class="post-image-container">
-                    <img src={post.image} alt={post.title} class="post-image" />
+                    <img
+                        src={"http://localhost:3001/" + post.filename}
+                        alt={post.title}
+                        class="post-image"
+                        style="image-rendering: auto !important;"
+                    />
                 </div>
 
                 {#if post.description}

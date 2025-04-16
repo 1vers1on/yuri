@@ -17,7 +17,7 @@ function parseTags(raw: string | null) {
 
 export async function GET({ url }) {
     const { include, exclude } = parseTags(url.searchParams.get('tags'));
-    const rating = url.searchParams.get('rating');
+    const nsfw = url.searchParams.get('nsfw') === 'true';
     const page = parseInt(url.searchParams.get('page') || '1');
     let limit = parseInt(url.searchParams.get('limit') || '50');
     if (limit > 100) limit = 100;
@@ -26,7 +26,7 @@ export async function GET({ url }) {
 
     const whereClause = {
         AND: [
-            rating ? { rating } : {},
+            nsfw ? {} : { rating: { in: ['g', 's'] } },
             ...include.map(tag => ({
                 tags: {
                     some: {

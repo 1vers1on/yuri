@@ -1,12 +1,15 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
+    import { userSettings } from "$lib/stores";
+    import { getPosts } from "$lib/api";
+    import { goto } from "$app/navigation";
 
     interface ResultItem {
         id: number;
-        title: string;
+        artist: string;
         tags: string[];
-        image: string;
+        filename: string;
     }
 
     interface Results {
@@ -18,15 +21,15 @@
         posts: [
             {
                 id: 1,
-                title: "test",
+                artist: "test",
                 tags: ["test", "test", "test"],
-                image: "https://placecats.com/neo/300/200",
+                filename: "https://placecats.com/neo/300/200",
             },
             {
                 id: 2,
-                title: "test",
+                artist: "test",
                 tags: ["test", "test"],
-                image: "https://placecats.com/millie/300/200",
+                filename: "https://placecats.com/millie/300/200",
             },
         ],
         nResults: 2,
@@ -47,12 +50,10 @@
     let searchTimeout: NodeJS.Timeout | null = null;
     let lastWord = "";
 
-    let modalResult: ResultItem | null = $state(null);
-
-    onMount(() => {
+    onMount(async () => {
         if (!browser) return;
 
-        totalPages = Math.max(1, Math.ceil(results.nResults / limit));
+        totalPages = results.nResults;
 
         try {
             const params = new URLSearchParams(window.location.search);
@@ -76,6 +77,8 @@
             }
 
             updateURL(query, page, limit, order);
+
+            results = await getPosts(query, page, limit, order);
 
             searching = false;
         } catch (err) {
@@ -183,15 +186,6 @@
         }, 500);
     }
 
-    function qMatches(result: ResultItem, q: string): boolean {
-        if (!q) return true;
-        const lowerQ = q.toLowerCase();
-        return (
-            result.title.toLowerCase().includes(lowerQ) ||
-            result.tags.some((tag) => tag.toLowerCase().includes(lowerQ))
-        );
-    }
-
     function prevPage(): void {
         if (page > 1) page--;
     }
@@ -199,11 +193,8 @@
         if (page < totalPages) page++;
     }
 
-    function openModal(result: ResultItem): void {
-        modalResult = result;
-    }
-    function closeModal(): void {
-        modalResult = null;
+    function show(result: ResultItem): void {
+        goto(`/single?id=${result.id}`);
     }
 </script>
 
@@ -267,16 +258,16 @@
             </tbody>
         </table>
 
-        <form on:submit={search}>
+        <form onsubmit={search}>
             <div class="autocomplete-wrapper">
                 <input
                     type="text"
                     bind:value={query}
                     placeholder="search tags..."
                     style="width: 200px; background-color: #000; color: #0f0; border: 2px inset #0f0;"
-                    on:input={handleInput}
-                    on:keydown={handleKeyDown}
-                    on:blur={handleBlur}
+                    oninput={handleInput}
+                    onkeydown={handleKeyDown}
+                    onblur={handleBlur}
                     autocomplete="off"
                 />
                 {#if isLoading}
@@ -291,7 +282,7 @@
                                 class="suggestion-item {i === selectedIndex
                                     ? 'selected'
                                     : ''}"
-                                on:mousedown={() =>
+                                onmousedown={() =>
                                     selectSuggestion(suggestion.tag)}
                             >
                                 <span>{suggestion.tag}</span>
@@ -314,51 +305,48 @@
             <blink>
                 <p class="cyan-text">LOADING...</p>
             </blink>
-        {:else if gridLayout}
+        {:else if $userSettings.gridLayout}
             <div class="results-container-grid">
                 {#each results.posts as result}
                     <div
                         class="result-item-grid"
-                        on:click={() => openModal(result)}
+                        onclick={() => show(result)}
                     >
-                        <p class="result-title-grid">{result.title}</p>
+                        <p class="result-title-grid">{result.artist}</p>
                         <img
-                            src={result.image}
-                            alt={result.title}
+                            src={"http://localhost:3001/" + result.filename}
+                            alt={result.artist}
                             class="result-image-grid"
+                            style="image-rendering: auto !important;"
                         />
-                        <div class="tags tags-grid">
-                            {#each result.tags as tag}
-                                <span class="tag">{tag}</span>
-                            {/each}
-                        </div>
                     </div>
                 {/each}
             </div>
         {:else}
             <div class="results-container">
                 {#each results.posts as result}
-                    <div class="result-item" on:click={() => openModal(result)}>
-                        <p class="result-title">{result.title}</p>
+                    <div class="result-item" onclick={() => show(result)}>
+                        <p class="result-title">{result.artist}</p>
                         <img
-                            src={result.image}
-                            alt={result.title}
+                            src={"http://localhost:3001/" + result.filename}
+                            alt={result.artist}
                             class="result-image"
+                            style="image-rendering: auto !important;"
                         />
-                        <div class="tags">
+                        <!-- <div class="tags">
                             {#each result.tags as tag}
                                 <span class="tag">{tag}</span>
                             {/each}
-                        </div>
+                        </div> -->
                     </div>
                 {/each}
             </div>
         {/if}
 
         <div class="pagination">
-            <button on:click={prevPage} disabled={page <= 1}>prev</button>
+            <button onclick={prevPage} disabled={page <= 1}>prev</button>
             <span>page {page} of {totalPages}</span>
-            <button on:click={nextPage} disabled={page >= totalPages}
+            <button onclick={nextPage} disabled={page >= totalPages}
                 >next</button
             >
             <span
@@ -422,21 +410,6 @@
         </div>
     </center>
 </div>
-
-{#if modalResult}
-    <div class="lightbox-overlay" on:click={closeModal}>
-        <div class="lightbox-content" on:click|stopPropagation>
-            <span class="close-button" on:click={closeModal}>x</span>
-            <h2>{modalResult.title}</h2>
-            <img src={modalResult.image} alt={modalResult.title} />
-            <div class="tags">
-                {#each modalResult.tags as tag}
-                    <span class="tag">{tag}</span>
-                {/each}
-            </div>
-        </div>
-    </div>
-{/if}
 
 <style>
     * {
