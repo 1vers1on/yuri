@@ -432,19 +432,22 @@
     }
     :global(body) {
         color: white;
-        background: url("wallstars.gif") repeat;
         margin: 0;
         padding: 0;
-        min-height: 100vh;
         width: 100%;
-        overflow-x: hidden;
-        overflow-y: auto;
         image-rendering: pixelated;
+        min-height: 100%;
+        background: transparent;
     }
 
     :global(html) {
         margin: 0;
         padding: 0;
+        height: 100%;
+        background: url("wallstars.gif");
+        background-repeat: repeat;
+        background-attachment: fixed;
+        background-size: auto;
     }
 
     * {

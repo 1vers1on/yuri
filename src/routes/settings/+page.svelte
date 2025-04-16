@@ -202,11 +202,17 @@
         overflow-x: hidden;
         overflow-y: auto;
         image-rendering: pixelated;
+        background: transparent;
     }
 
     :global(html) {
         margin: 0;
         padding: 0;
+        height: 100%;
+        background: url("wallstars.gif");
+        background-repeat: repeat;
+        background-attachment: fixed;
+        background-size: auto;
     }
 
     * {

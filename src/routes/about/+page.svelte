@@ -26,12 +26,19 @@
             cellpadding="5"
             cellspacing="0"
             bgcolor="#000033"
-            style="margin: 15px auto; width: 80%; border: 3px ridge #ff00ff;"
+            style="margin: 15px auto; width: 80%; border: 3px ridge #ff00ff; height: min-content;"
         >
             <tbody>
                 <tr>
-                    <td align="center" style="border-bottom: 2px solid #00ffff;">
-                        <span class="cyan-text" style="font-weight: bold; font-size: 18px;">NAVIGATION</span>
+                    <td
+                        align="center"
+                        style="border-bottom: 2px solid #00ffff;"
+                    >
+                        <span
+                            class="cyan-text"
+                            style="font-weight: bold; font-size: 18px;"
+                            >NAVIGATION</span
+                        >
                     </td>
                 </tr>
                 <tr>
@@ -39,9 +46,9 @@
                         <div class="nav-links">
                             <a href="/" class="nav-link">[HOME]</a>
                             <span class="nav-divider">★</span>
-                            <a href="/random" class="nav-link">[RANDOM]</a>
+                            <a href="/upload" class="nav-link">[RANDOM]</a>
                             <span class="nav-divider">★</span>
-                            <a href="/today" class="nav-link">[TODAY]</a>
+                            <a href="/random" class="nav-link">[TODAY]</a>
                             <span class="nav-divider">★</span>
                             <a href="/about" class="nav-link">[ABOUT]</a>
                             <span class="nav-divider">★</span>
@@ -62,34 +69,24 @@
             <tbody>
                 <tr>
                     <td align="center">
-                        <img src="spinning-heart.gif" alt="spinning heart" />
-                        <blink><span class="pink-text">WELCOME TO THE YURI ARCHIVE!</span></blink>
-                        <img src="spinning-heart.gif" alt="spinning heart" />
+                        <img src="beatingheart.gif" alt="heart" />
+                        <span class="pink-text">WELCOME TO THE YURI ARCHIVE!</span>
+                        <img src="beatingheart.gif" alt="heart" />
                     </td>
                 </tr>
                 <tr>
                     <td align="center" class="about-text">
-                        ignore this stuff its from chatgpt i need to change it.
                         <p>
-                            this site is a super cozy and nostalgic little corner of the web dedicated to archiving everything yuri! (´｡• ᵕ •｡`) ♡
-                        </p>
-                        <img src="yuri-girls.gif" alt="cute yuri gif" style="margin: 10px 0;" />
-                        <p>
-                            explore our hand-picked gallery of adorable and romantic manga, anime, images, and fanart from all over the internet ~☆~
+                            yuri.
                         </p>
                         <p>
-                            new stuff is added all the time so please bookmark and check back soon nyaaa!
+                            its self explanatory.
                         </p>
-                    </td>
-                </tr>
-                <tr>
-                    <td align="center">
-                        <img src="rainbow-divider.gif" alt="divider" />
                     </td>
                 </tr>
                 <tr>
                     <td align="center" class="blink-text">
-                        <blink>✧･ﾟ: *✧･ﾟ:* 💖 KEEP YURI ALIVE 💖 *:･ﾟ✧*:･ﾟ✧</blink>
+                        email me <a href="mailto:elliehartung@outlook.com"><img src="Cat.gif"></a>
                     </td>
                 </tr>
             </tbody>
@@ -136,11 +133,17 @@
         overflow-x: hidden;
         overflow-y: auto;
         image-rendering: pixelated;
+        background: transparent;
     }
 
     :global(html) {
         margin: 0;
         padding: 0;
+        height: 100%;
+        background: url("wallstars.gif");
+        background-repeat: repeat;
+        background-attachment: fixed;
+        background-size: auto;
     }
 
     * {
@@ -208,14 +211,19 @@
     .nav-links {
         display: flex;
         justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
         gap: 10px;
+        padding: 5px;
     }
 
     .nav-link {
         color: #00ff00;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.2s;
         padding: 3px 5px;
         border: 1px outset #00ff00;
-        text-decoration: none;
     }
 
     .nav-link:hover {
@@ -223,6 +231,7 @@
         background-color: #001100;
         border: 1px inset #ff00ff;
         text-shadow: 0 0 5px #ff00ff;
+        text-decoration: none;
     }
 
     .nav-divider {

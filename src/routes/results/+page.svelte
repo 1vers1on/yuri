@@ -451,6 +451,17 @@
         margin: 0;
         padding: 0;
         min-height: 100vh;
+        background: transparent;
+    }
+
+    :global(html) {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: url("wallstars.gif");
+        background-repeat: repeat;
+        background-attachment: fixed;
+        background-size: auto;
     }
     .page-container {
         padding: 20px;

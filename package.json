@@ -23,6 +23,7 @@
 		"vite": "^6.2.5"
 	},
 	"dependencies": {
-		"@prisma/client": "^6.6.0"
+		"@prisma/client": "^6.6.0",
+		"svg-captcha": "^1.4.0"
 	}
 }

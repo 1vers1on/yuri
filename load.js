@@ -5,7 +5,7 @@ import path from 'path';
 
 const prisma = new PrismaClient();
 
-const filePath = path.resolve('./metadata.json');
+const filePath = path.resolve('./metadata_out.json');
 
 async function main() {
     console.log('reading data...');
@@ -19,18 +19,19 @@ async function main() {
 
     const tagCache = new Map();
 
+    const seenHashes = new Set();
+
     console.log('importing yuri...');
     for (const [filename, entry] of Object.entries(data)) {
-        const { id, rating, source, artist, tags } = entry;
+        const { hash, rating, source, artist, tags } = entry;
 
-        // parse tags into individual tag strings
         const tagList = tags
             .split(/[ ,]+/)
             .map(t => t.trim().toLowerCase())
             .filter(t => t.length > 0);
 
-        // create or connect tags
         const tagConnections = [];
+        const seenTagIds = new Set();
 
         for (const tag of tagList) {
             let tagId = tagCache.get(tag);
@@ -43,13 +44,16 @@ async function main() {
                 tagId = tagEntry.id;
                 tagCache.set(tag, tagId);
             }
-            tagConnections.push({ tagId });
+
+            if (!seenTagIds.has(tagId)) {
+                tagConnections.push({ tagId });
+                seenTagIds.add(tagId);
+            }
         }
 
-        // create the yuri post
         await prisma.yuri.create({
             data: {
-                id,
+                id: hash,
                 filename,
                 rating,
                 source,

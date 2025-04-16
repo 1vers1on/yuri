@@ -3,8 +3,18 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+let statsCache: any = null;
+let lastCacheTime = 0;
+const CACHE_TTL = 3600000
+
 export async function GET() {
 	try {
+		const now = Date.now();
+
+		if (statsCache && (now - lastCacheTime < CACHE_TTL)) {
+			return json(statsCache);
+		}
+
 		const totalYuri = await prisma.yuri.count();
 		const totalTags = await prisma.tag.count();
 
@@ -26,7 +36,7 @@ export async function GET() {
 		const totalTagLinks = await prisma.yuriTag.count();
 		const averageTagsPerPost = totalYuri === 0 ? 0 : totalTagLinks / totalYuri;
 
-		return json({
+		const responseData = {
 			totalYuri,
 			totalTags,
 			averageTagsPerPost,
@@ -34,7 +44,12 @@ export async function GET() {
 				tag: t.tag,
 				count: t._count.posts
 			}))
-		});
+		};
+
+		statsCache = responseData;
+		lastCacheTime = now;
+
+		return json(responseData);
 	} catch (err) {
 		console.error('failed to fetch stats :(', err);
 		return json({ error: 'internal server error' }, { status: 500 });
