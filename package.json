@@ -24,6 +24,7 @@
 	},
 	"dependencies": {
 		"@prisma/client": "^6.6.0",
+		"sharp": "^0.34.1",
 		"svg-captcha": "^1.4.0"
 	}
 }

@@ -2,6 +2,8 @@
 
 </script>
 
+<!-- https://gifcity.carrd.co/#blinkies -->
+
 <div class="page-container">
     <center>
         <div class="header-banner">
@@ -46,9 +48,9 @@
                         <div class="nav-links">
                             <a href="/" class="nav-link">[HOME]</a>
                             <span class="nav-divider">★</span>
-                            <a href="/upload" class="nav-link">[RANDOM]</a>
+                            <a href="/random" class="nav-link">[RANDOM]</a>
                             <span class="nav-divider">★</span>
-                            <a href="/random" class="nav-link">[TODAY]</a>
+                            <a href="/today" class="nav-link">[TODAY]</a>
                             <span class="nav-divider">★</span>
                             <a href="/about" class="nav-link">[ABOUT]</a>
                             <span class="nav-divider">★</span>
@@ -93,13 +95,13 @@
         </table>
 
         <div style="margin-top: 20px;">
+            <a href="http://www.hat.net/abs/noclick/index.html">Dont click here</a>
+            <br>
             <img src="https://www.counter12.com/img-248059WcZdAW4104-26.gif" alt="web counter" />
-            <div class="blinkies-container">
-                <img src="blinky-yuri.gif" alt="yuri blinkie" />
-                <img src="blinky-love.gif" alt="love blinkie" />
-                <img src="blinky-gay.gif" alt="gay blinkie" />
-                <img src="blinky-pixelheart.gif" alt="pixel heart blinkie" />
-            </div>
+            <br>
+            <a href="/guestbook">
+                <img src="bguestbook.gif" alt="guestbook" />
+            </a>
             <table border="0" cellpadding="3" align="center">
                 <tbody>
                     <tr>

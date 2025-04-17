@@ -3,6 +3,7 @@
     import { browser } from "$app/environment";
     import { goto } from "$app/navigation";
     import { getPost } from "$lib/api";
+    import { favorites } from "$lib/stores";
 
     interface Post {
         id: number;
@@ -29,6 +30,50 @@
         setTimeout(() => goto(window.location.href), 100);
     }
 
+    function download() {
+        const a = document.createElement("a");
+        a.href = `/api/download?id=${post.id}`;
+        a.download = post.filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function share() {
+        const shareData = {
+            title: "YURI ARCHIVE",
+            text: "Check out this image",
+            url: window.location.href,
+        };
+
+        if (navigator.share) {
+            navigator
+                .share(shareData)
+                .then(() => console.log("Post shared successfully"))
+                .catch((error) =>
+                    console.error("Error sharing post:", error)
+                );
+        } else {
+            alert("Sharing not supported on this browser.");
+        }
+    }
+
+    let isFavorite = $state(false);
+    let favoriteText = $state("FAVORITE");
+    
+    $effect(() => {
+        favoriteText = isFavorite ? "UNFAVORITE" : "FAVORITE";
+    });
+    
+    function toggleFavorite() {
+        if (isFavorite) {
+            favorites.remove(String(post.id));
+        } else {
+            favorites.add(String(post.id));
+        }
+        isFavorite = !isFavorite;
+    }
+
     onMount(async () => {
         if (!browser) return;
 
@@ -42,6 +87,8 @@
             }
             post = await getPost(id);
             isLoading = false;
+
+            isFavorite = favorites.has(String(post.id));
         } catch (err) {
             console.error("Error fetching post:", err);
             notFound = true;
@@ -97,9 +144,9 @@
                         <div class="nav-links">
                             <a href="/" class="nav-link">[HOME]</a>
                             <span class="nav-divider">★</span>
-                            <a href="/upload" class="nav-link">[RANDOM]</a>
+                            <a href="/random" class="nav-link">[RANDOM]</a>
                             <span class="nav-divider">★</span>
-                            <a href="/random" class="nav-link">[TODAY]</a>
+                            <a href="/today" class="nav-link">[TODAY]</a>
                             <span class="nav-divider">★</span>
                             <a href="/about" class="nav-link">[ABOUT]</a>
                             <span class="nav-divider">★</span>
@@ -157,13 +204,13 @@
                 </div>
 
                 <div class="post-actions">
-                    <button class="action-button">
-                        <span class="star yellow">★</span> FAVORITE
+                    <button class="action-button" onclick={toggleFavorite}>
+                        <span class="star yellow">★</span> {favoriteText}
                     </button>
-                    <button class="action-button">
+                    <button class="action-button" onclick={download}>
                         <span class="star green">★</span> DOWNLOAD
                     </button>
-                    <button class="action-button">
+                    <button class="action-button" onclick={share}>
                         <span class="star red">★</span> SHARE
                     </button>
                 </div>

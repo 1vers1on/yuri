@@ -45,4 +45,44 @@ function createSettingsStore() {
     };
 }
 
+function createFavoritesStore() {
+    const initialFavorites = browser
+        ? JSON.parse(localStorage.getItem('favorites') || '[]')
+        : [];
+
+    const { subscribe, set, update } = writable<string[]>(initialFavorites);
+
+    return {
+        subscribe,
+        add: (id: string) => update(favorites => {
+            const updatedFavorites = [...favorites, id];
+            if (browser) {
+                localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+            }
+            return updatedFavorites;
+        }),
+        remove: (id: string) => update(favorites => {
+            const updatedFavorites = favorites.filter(favId => favId !== id);
+            if (browser) {
+                localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+            }
+            return updatedFavorites;
+        }),
+        has: (id: string) => {
+            let favorites: string[] = [];
+            if (browser) {
+                favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            }
+            return favorites.includes(id);
+        },
+        reset: () => {
+            set([]);
+            if (browser) {
+                localStorage.removeItem('favorites');
+            }
+        }
+    };
+}
+
+export const favorites = createFavoritesStore();
 export const userSettings = createSettingsStore();

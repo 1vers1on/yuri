@@ -66,9 +66,9 @@
                         <div class="nav-links">
                             <a href="/" class="nav-link">[HOME]</a>
                             <span class="nav-divider">★</span>
-                            <a href="/upload" class="nav-link">[RANDOM]</a>
+                            <a href="/random" class="nav-link">[RANDOM]</a>
                             <span class="nav-divider">★</span>
-                            <a href="/random" class="nav-link">[TODAY]</a>
+                            <a href="/today" class="nav-link">[TODAY]</a>
                             <span class="nav-divider">★</span>
                             <a href="/about" class="nav-link">[ABOUT]</a>
                             <span class="nav-divider">★</span>

@@ -18,7 +18,13 @@ export async function GET({ url }) {
     const today = dateParam ? new Date(dateParam) : new Date();
     const dateStr = today.toISOString().split('T')[0];
 
-    const totalPosts = await prisma.yuri.count();
+    const totalPosts = await prisma.yuri.count({
+        where: {
+            rating: {
+                in: ['s', 'g']
+            }
+        }
+    });
 
     if (totalPosts === 0) {
         return json({

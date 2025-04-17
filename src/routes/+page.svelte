@@ -11,6 +11,8 @@
     let searchTimeout: NodeJS.Timeout | null = null;
     let searchType = "random";
     let lastWord = "";
+    let searchInput: HTMLInputElement;
+    let suggestionContainer: HTMLDivElement;
 
     const popularSearches = data.popularSearches;
 
@@ -48,13 +50,18 @@
 
     function handleInput() {
         selectedIndex = -1;
+        
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
         const words = searchQuery.split(" ");
         lastWord = words[words.length - 1];
 
         if (lastWord.length >= 1) {
             searchTimeout = setTimeout(() => {
                 fetchSuggestions();
-            }, 300);
+            }, 200); // Reduced delay for more responsiveness
         } else {
             suggestions = [];
             showSuggestions = false;
@@ -63,9 +70,10 @@
 
     function selectSuggestion(tag: string) {
         const words = searchQuery.split(" ");
-        words[words.length - 1] = tag;
+        words[words.length - 1] = tag + " "; // Add space after selection
         searchQuery = words.join(" ");
         showSuggestions = false;
+        searchInput.focus(); // Keep focus on input after selection
     }
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -74,22 +82,45 @@
         if (event.key === "ArrowDown") {
             event.preventDefault();
             selectedIndex = (selectedIndex + 1) % suggestions.length;
+            scrollSuggestionIntoView();
         } else if (event.key === "ArrowUp") {
             event.preventDefault();
             selectedIndex =
                 selectedIndex <= 0 ? suggestions.length - 1 : selectedIndex - 1;
+            scrollSuggestionIntoView();
         } else if (event.key === "Enter" && selectedIndex >= 0) {
             event.preventDefault();
             selectSuggestion(suggestions[selectedIndex].tag);
+        } else if (event.key === "Tab" && selectedIndex >= 0) {
+            event.preventDefault();
+            selectSuggestion(suggestions[selectedIndex].tag);
         } else if (event.key === "Escape") {
+            event.preventDefault();
             showSuggestions = false;
         }
     }
 
-    function handleBlur() {
-        setTimeout(() => {
-            showSuggestions = false;
-        }, 200);
+    function scrollSuggestionIntoView() {
+        if (suggestionContainer && selectedIndex >= 0) {
+            const selectedElement = suggestionContainer.children[selectedIndex] as HTMLElement;
+            if (selectedElement) {
+                selectedElement.scrollIntoView({ block: 'nearest' });
+            }
+        }
+    }
+
+    function handleFocus() {
+        if (lastWord.length >= 1 && !showSuggestions) {
+            fetchSuggestions();
+        }
+    }
+
+    function handleBlur(event: FocusEvent) {
+        if (suggestionContainer && !suggestionContainer.contains(event.relatedTarget as Node)) {
+            setTimeout(() => {
+                showSuggestions = false;
+            }, 150);
+        }
     }
 
     function handleSearch() {
@@ -171,9 +202,9 @@
                         <div class="nav-links">
                             <a href="/" class="nav-link">[HOME]</a>
                             <span class="nav-divider">★</span>
-                            <a href="/upload" class="nav-link">[RANDOM]</a>
+                            <a href="/random" class="nav-link">[RANDOM]</a>
                             <span class="nav-divider">★</span>
-                            <a href="/random" class="nav-link">[TODAY]</a>
+                            <a href="/today" class="nav-link">[TODAY]</a>
                             <span class="nav-divider">★</span>
                             <a href="/about" class="nav-link">[ABOUT]</a>
                             <span class="nav-divider">★</span>
@@ -184,66 +215,70 @@
             </tbody>
         </table>
         <table
-            border="1"
-            cellpadding="10"
-            cellspacing="0"
-            bgcolor="#000000"
-            style="margin-top: 20px; border: 3px ridge #00ff00;"
-        >
-            <tbody>
-                <tr>
-                    <td>
-                        <form on:submit|preventDefault={handleSearch}>
-                            <div class="autocomplete-wrapper">
-                                <input
-                                    type="text"
-                                    name="q"
-                                    bind:value={searchQuery}
-                                    on:input={handleInput}
-                                    on:keydown={handleKeyDown}
-                                    on:blur={handleBlur}
-                                    style="width: 200px; background-color: #000; color: #0f0; border: 2px inset #0f0;"
-                                    autocomplete="off"
-                                />
-                                {#if isLoading}
-                                    <div class="loading-indicator">
-                                        <span class="blink-text"
-                                            >LOADING...</span
-                                        >
-                                    </div>
-                                {/if}
-                                {#if showSuggestions}
-                                    <div class="suggestion-list">
-                                        {#each suggestions as suggestion, i}
-                                            <div
-                                                class="suggestion-item {i ===
-                                                selectedIndex
-                                                    ? 'selected'
-                                                    : ''}"
-                                                on:mousedown={() =>
-                                                    selectSuggestion(
-                                                        suggestion.tag,
-                                                    )}
-                                            >
-                                                <span>{suggestion.tag}</span>
-                                                <span class="post-count"
-                                                    >[{suggestion.count}]</span
-                                                >
-                                            </div>
-                                        {/each}
-                                    </div>
-                                {/if}
-                            </div>
+        border="1"
+        cellpadding="10"
+        cellspacing="0"
+        bgcolor="#000000"
+        style="margin-top: 20px; border: 3px ridge #00ff00;"
+    >
+        <tbody>
+            <tr>
+                <td>
+                    <form on:submit|preventDefault={handleSearch}>
+                        <div class="autocomplete-wrapper">
                             <input
-                                type="submit"
-                                value="SEARCH"
-                                style="background-color: #000; color: #f0f; font-weight: bold; border: 2px outset #f0f;"
+                                type="text"
+                                name="q"
+                                bind:value={searchQuery}
+                                bind:this={searchInput}
+                                on:input={handleInput}
+                                on:keydown={handleKeyDown}
+                                on:blur={handleBlur}
+                                on:focus={handleFocus}
+                                style="width: 200px; background-color: #000; color: #0f0; border: 2px inset #0f0;"
+                                autocomplete="off"
+                                placeholder="Search tags..."
                             />
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                            {#if isLoading}
+                                <div class="loading-indicator">
+                                    <span class="blink-text"
+                                        >LOADING...</span
+                                    >
+                                </div>
+                            {/if}
+                            {#if showSuggestions}
+                                <div class="suggestion-list" bind:this={suggestionContainer}>
+                                    {#each suggestions as suggestion, i}
+                                        <div
+                                            class="suggestion-item {i ===
+                                            selectedIndex
+                                                ? 'selected'
+                                                : ''}"
+                                            on:mousedown={() =>
+                                                selectSuggestion(
+                                                    suggestion.tag,
+                                                )}
+                                            on:mouseenter={() => selectedIndex = i}
+                                        >
+                                            <span>{suggestion.tag}</span>
+                                            <span class="post-count"
+                                                >[{suggestion.count}]</span
+                                            >
+                                        </div>
+                                    {/each}
+                                </div>
+                            {/if}
+                        </div>
+                        <input
+                            type="submit"
+                            value="SEARCH"
+                            style="background-color: #000; color: #f0f; font-weight: bold; border: 2px outset #f0f;"
+                        />
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
         <table
             border="0"
@@ -376,6 +411,10 @@
         </div>
 
         <div class="buttons" style="margin-top: 20px;">
+            <a href="/guestbook">
+                <img src="bguestbook.gif" alt="guestbook" />
+            </a>
+            <br>
             <div>
                 <img
                     src="https://www.counter12.com/img-248059WcZdAW4104-26.gif"
@@ -558,5 +597,70 @@
 
     .nav-divider {
         color: #ffff00;
+    }
+
+    .autocomplete-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .suggestion-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 100;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        background-color: #000033;
+        border: 2px solid #00ffff;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        scroll-behavior: smooth;
+    }
+
+    .suggestion-item {
+        padding: 5px 8px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        color: #00ff00;
+        text-align: left;
+        border-bottom: 1px dotted #004400;
+    }
+
+    .suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+    .suggestion-item:hover {
+        background-color: #001133;
+    }
+
+    .suggestion-item.selected {
+        background-color: #002244;
+        color: #ffff00;
+    }
+
+    .post-count {
+        color: #00cccc;
+        margin-left: 10px;
+    }
+
+    .loading-indicator {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #000022;
+        padding: 5px;
+        border: 1px solid #00ffff;
+        text-align: center;
+        z-index: 101;
+    }
+
+    .blink-text {
+        animation: blinker 0.8s step-start infinite;
+        color: #ff00ff;
     }
 </style>
