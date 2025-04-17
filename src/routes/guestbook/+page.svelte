@@ -12,14 +12,16 @@
     };
 
     const entries = writable<Entry[]>([]);
-    let loading = true;
+    let loading = $state(false);
     let error: Error | null = null;
 
-    let name = "";
-    let email = "";
-    let website = "";
-    let message = "";
-    let cloudflareToken = "";
+    let name = $state("");
+    let email = $state("");
+    let website = $state("");
+    let message = $state("");
+    let captchaToken = "";
+    let captchaHtml = $state("");
+    let captchaText = $state("");
 
     async function loadEntries() {
         try {
@@ -54,6 +56,47 @@
         }
 
         try {
+            if (!captchaToken) {
+                alert("please complete the captcha!");
+                return;
+            }
+
+            const result = await fetch(
+                "/api/captcha",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token: captchaToken, text: captchaText }),
+                },
+            );
+
+            if (!result.ok) {
+                const error = await result.json();
+                if (error.error == "Captcha failed") {
+                    alert("Captcha failed, please try again!");
+                } else {
+                    throw new Error(`Failed to submit entry: ${result.status}`);
+                }
+            }
+
+            // await fetch("/api/captcha", {
+            //     method: "POST",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify({ token: captchaToken, 
+            // });
+
+            // await fetch(
+            //     "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            //     {
+            //         method: "POST",
+            //         headers: { "Content-Type": "application/json" },
+            //         body: JSON.stringify({
+            //             secret: "0x4AAAAAABM5gZ1E3NqJyBqJ",
+            //             response: captchaToken,
+            //         }),
+            //     },
+            // );
+
             const res = await fetch("/api/guestbook", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
@@ -62,7 +105,7 @@
                     email,
                     website,
                     message,
-                    cloudflareToken,
+                    captchaToken,
                 }),
             });
 
@@ -83,21 +126,25 @@
         }
     }
 
-    onMount(() => {
+    onMount(async () => {
+        const response = await fetch(
+            "/api/captcha",
+            {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+            },
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch captcha");
+        }
+        const data = await response.json();
+        captchaHtml = data.data;
+        captchaToken = data.token;
+
         loadEntries();
-        (window as any).onTurnstileSuccess = (t: string) => {
-            cloudflareToken = t;
-        };
     });
 </script>
-
-<svelte:head>
-    <script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-        async
-        defer
-    ></script>
-</svelte:head>
 
 <div class="page-container">
     <center>
@@ -215,23 +262,17 @@
                                         >
                                     </tr>
                                     <tr>
-                                        <td colspan="2" align="center">
-                                            <div
-                                                class="turnstile-container"
-                                                style="overflow: hidden; max-width: 100%;"
-                                            >
-                                                <div
-                                                    style="display: block; flex-flow: row;"
-                                                >
-                                                    <div
-                                                        class="cf-turnstile"
-                                                        data-sitekey="0x4AAAAAABM5gZ1E3NqJyBqJ"
-                                                        data-size="flexible"
-                                                        data-callback="onTurnstileSuccess"
-                                                    ></div>
-                                                </div>
-                                            </div></td
-                                        >
+                                        <td align="left">
+                                            {@html captchaHtml}
+                                        </td>
+                                        <td align="right">
+                                            <input
+                                                type="text"
+                                                bind:value={captchaText}
+                                                placeholder="captcha"
+                                                required
+                                            />
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td colspan="2" align="center">

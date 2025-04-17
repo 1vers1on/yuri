@@ -307,7 +307,7 @@
             <blink>
                 <p class="cyan-text">LOADING...</p>
             </blink>
-        {:else if userSettings.settings.gridLayout}
+        {:else if $userSettings.gridLayout}
             <Grid results={results.posts} onItemClick={show} />
         {:else}
             <List results={results.posts} onItemClick={show} />

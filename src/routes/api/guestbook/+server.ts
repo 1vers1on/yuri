@@ -1,5 +1,6 @@
 import { json } from "@sveltejs/kit";
 import { PrismaClient } from "@prisma/client";
+import { isValid } from "$lib/server/captcha";
 
 const prisma = new PrismaClient();
 
@@ -36,11 +37,9 @@ function isRateLimited(ip: string): boolean {
 export async function POST({ request, getClientAddress }) {
     const data = await request.json();
     const { name, message, email, website } = data;
-    console.log("Received data:", data);
-    const token = data.cloudflareToken;
+    const token = data.captchaToken;
     const userIP =
         request.headers.get("cf-connecting-ip") || getClientAddress();
-    console.log("User IP:", token, userIP);
 
     if (isRateLimited(userIP)) {
         return json(
@@ -58,25 +57,15 @@ export async function POST({ request, getClientAddress }) {
         );
     }
 
-    const res = await fetch(
-        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
+    if (!isValid(token)) {
+        return json(
+            {
+                error: "Invalid captcha token.",
             },
-            body: JSON.stringify({
-                remoteip: userIP,
-                secret: process.env.TURNSTILE_SECRET,
-                response: token,
-            }),
-        },
-    );
-
-    const result = await res.json();
-    console.log(result);
-    if (!result.success) {
-        return json({ error: "Captcha verification failed" }, { status: 400 });
+            {
+                status: 400,
+            },
+        );
     }
 
     const entry = await prisma.guestbook.create({

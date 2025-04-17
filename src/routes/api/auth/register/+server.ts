@@ -1,36 +1,38 @@
 import { json, error } from "@sveltejs/kit";
+import type { RequestHandler } from '@sveltejs/kit';
 import { register } from "$lib/server/auth";
 import { isValid } from "$lib/server/captcha.js";
 
-export async function POST({ request, cookies }) {
-    const { username, password, captchaToken } = await request.json();
+export const POST: RequestHandler = async ({ request, cookies }) => {
     try {
+        const { username, password, captchaToken } = await request.json();
+        
         if (!username || !password || !captchaToken) {
-            return error(400, "Missing required fields");
+            throw error(400, "Missing required fields");
         }
 
         if (!isValid(captchaToken)) {
-            return error(400, "Invalid captcha");
+            throw error(400, "Invalid captcha");
         }
 
         if (username.length < 3) {
-            return error(400, "Username must be at least 3 characters long");
+            throw error(400, "Username must be at least 3 characters long");
         }
 
         if (password.length < 5) {
-            return error(400, "Password must be at least 5 characters long");
+            throw error(400, "Password must be at least 5 characters long");
         }
 
         if (password.length > 100) {
-            return error(400, "Password must be less than 100 characters long");
+            throw error(400, "Password must be less than 100 characters long");
         }
 
         if (username.length > 100) {
-            return error(400, "Username must be less than 100 characters long");
+            throw error(400, "Username must be less than 100 characters long");
         }
 
         if (!/^[a-zA-Z0-9]+$/.test(username)) {
-            return error(400, "Username can only contain letters and numbers");
+            throw error(400, "Username can only contain letters and numbers");
         }
 
         try {
@@ -46,19 +48,25 @@ export async function POST({ request, cookies }) {
         } catch (err) {
             if (err instanceof Error) {
                 if (err.message === "User already exists") {
-                    return error(409, "User already exists");
+                    throw error(409, "User already exists");
                 }
-
                 if (err.message === "Invalid password") {
-                    return error(400, "Invalid password");
+                    throw error(400, "Invalid password");
                 }
-
-                return error(500, "Internal Server Error");
+                if (err.message === "Missing required fields") {
+                    throw error(400, "Missing required fields");
+                }
+                throw error(500, "Internal Server Error: " + err.message);
             }
+            throw error(500, "Unknown internal server error");
         }
     } catch (err) {
         if (err instanceof Error) {
-            return error(500, err.message);
+            console.error(err);
+            throw error(500, "Internal Server Error: " + err.message);
         }
+        
+        console.error(err);
+        throw error(500, "Internal Server Error");
     }
-}
+};

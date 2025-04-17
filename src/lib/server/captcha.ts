@@ -25,7 +25,7 @@ function generateToken() {
 
 export function generateCaptcha() {
     const captcha = svgCaptcha.create({
-        size: 6,
+        size: 4,
         ignoreChars: "0o1l",
         noise: 3,
         color: true,

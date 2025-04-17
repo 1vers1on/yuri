@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { userSettings } from "$lib/globalState";
+    import { registerUser } from "$lib/auth";
     let settings = {
         theme: "dark",
         animations: true,
@@ -12,20 +13,30 @@
     let username = $state("");
     let password = $state("");
     let confirmPassword = $state("");
-    let email = $state("");
     let displayName = $state("");
     let showRegisterForm = $state(false);
+
+    let captchaHtml = $state("");
+    let captchaValue = $state("");
+
+    let captchaToken = "";
 
     function saveSettings() {
         localStorage.setItem("userSettings", JSON.stringify(settings));
         alert("settings saved! yay!! ☆*:.｡.o(≧▽≦)o.｡.:*☆");
     }
 
-    onMount(() => {
-        const saved = localStorage.getItem("userSettings");
-        if (saved) {
-            settings = JSON.parse(saved);
-        }
+    onMount(async () => {
+        let response = await fetch("/api/captcha", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const data = await response.json();
+        captchaHtml = data.data;
+        captchaToken = data.token;
     });
 
     function login() {
@@ -38,12 +49,35 @@
         }
     }
 
-    function register() {
-        if (username && email && password && confirmPassword) {
+    async function register() {
+        if (username && password && confirmPassword) {
             if (password === confirmPassword) {
                 loggedIn = true;
                 displayName = username;
-                alert("Registration successful! Welcome, " + displayName + "!");
+                let response = await fetch("/api/captcha", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        token: captchaToken,
+                        text: captchaValue,
+                    }),
+                });
+
+                if (response.ok) {
+                    try {
+                        await registerUser(username, password, captchaToken);
+                    } catch (error) {
+                        if (error instanceof Error) {
+                            alert("Registration failed: " + error.message);
+                        } else {
+                            alert("Registration failed: " + error);
+                        }
+                    }
+                } else {
+                    alert("Captcha verification failed. Please try again.");
+                }
             } else {
                 alert("Passwords do not match.");
             }
@@ -205,15 +239,6 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td align="right">email:</td>
-                                                <td align="left">
-                                                    <input
-                                                        type="email"
-                                                        bind:value={email}
-                                                    />
-                                                </td>
-                                            </tr>
-                                            <tr>
                                                 <td align="right">password:</td>
                                                 <td align="left">
                                                     <input
@@ -232,6 +257,20 @@
                                                         bind:value={
                                                             confirmPassword
                                                         }
+                                                    />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="right">
+                                                    {@html captchaHtml}
+                                                </td>
+                                                <td align="left">
+                                                    <input
+                                                        type="text"
+                                                        bind:value={
+                                                            captchaValue
+                                                        }
+                                                        placeholder="Enter captcha"
                                                     />
                                                 </td>
                                             </tr>
@@ -358,7 +397,7 @@
                         <td>
                             <input
                                 type="checkbox"
-                                bind:checked={userSettings.settings.nsfw}
+                                bind:checked={$userSettings.nsfw}
                             />
                         </td>
                     </tr>
@@ -367,7 +406,7 @@
                         <td>
                             <input
                                 type="text"
-                                bind:value={userSettings.settings.defaultTags}
+                                bind:value={$userSettings.defaultTags}
                                 placeholder="e.g. yuri, cute"
                             />
                         </td></tr
@@ -377,7 +416,7 @@
                         <td>
                             <input
                                 type="checkbox"
-                                bind:checked={userSettings.settings.gridLayout}
+                                bind:checked={$userSettings.gridLayout}
                             />
                         </td>
                     </tr>

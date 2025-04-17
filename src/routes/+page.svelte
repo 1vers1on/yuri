@@ -155,7 +155,7 @@
                 stats = await res.json();
             }
         } catch (err) {
-            console.error("failed to load stats meow 😿", err);
+            console.error("failed to load stats meow", err);
         }
     });
 </script>

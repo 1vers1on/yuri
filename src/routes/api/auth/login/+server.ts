@@ -1,18 +1,13 @@
 import { json, error } from "@sveltejs/kit";
 import { login } from "$lib/server/auth";
-import { isValid } from "$lib/server/captcha.js";
 
 export async function POST({ request, cookies }) {
-    const { username, password, captchaToken } = await request.json();
+    const { username, password } = await request.json();
     try {
-        if (!username || !password || !captchaToken) {
+        if (!username || !password) {
             return error(400, "Missing required fields");
         }
-
-        if (!isValid(captchaToken)) {
-            return error(400, "Invalid captcha");
-        }
-
+        
         try {
             const { refreshToken } = await login(username, password);
             cookies.set("refreshToken", refreshToken, {
