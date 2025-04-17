@@ -3,6 +3,9 @@ import { get } from 'svelte/store';
 
 export async function getPosts(tags: string, page: number, limit: number, sort: string) {
     const url = new URL('/api/posts', window.location.origin);
+    if (get(userSettings).defaultTags) {
+        tags = tags + ' ' + get(userSettings).defaultTags;
+    }
     url.searchParams.set('tags', tags);
     url.searchParams.set('page', page.toString());
     url.searchParams.set('limit', limit.toString());

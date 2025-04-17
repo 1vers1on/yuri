@@ -4,11 +4,13 @@ import { browser } from '$app/environment';
 export interface UserSettings {
     gridLayout: boolean;
     nsfw: boolean;
+    defaultTags: string;
 }
 
 const defaultSettings: UserSettings = {
     gridLayout: false,
     nsfw: false,
+    defaultTags: "",
 };
 
 

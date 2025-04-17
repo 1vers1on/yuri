@@ -8,8 +8,16 @@
         enableTips: true,
     };
 
+    let loggedIn = $state(false);
+    let username = $state("");
+    let password = $state("");
+    let confirmPassword = $state("");
+    let email = $state("");
+    let displayName = $state("");
+    let showRegisterForm = $state(false);
+    
+
     function saveSettings() {
-        // replace this with real persistence later
         localStorage.setItem("userSettings", JSON.stringify(settings));
         alert("settings saved! yay!! ☆*:.｡.o(≧▽≦)o.｡.:*☆");
     }
@@ -20,6 +28,38 @@
             settings = JSON.parse(saved);
         }
     });
+
+    function login() {
+        if (username && password) {
+            loggedIn = true;
+            displayName = username;
+            alert("Login successful! Welcome back, " + displayName + "!");
+        } else {
+            alert("Please enter both username and password.");
+        }
+    }
+
+    function register() {
+        if (username && email && password && confirmPassword) {
+            if (password === confirmPassword) {
+                loggedIn = true;
+                displayName = username;
+                alert("Registration successful! Welcome, " + displayName + "!");
+            } else {
+                alert("Passwords do not match.");
+            }
+        } else {
+            alert("Please fill in all fields.");
+        }
+    }
+
+    function logout() {
+        loggedIn = false;
+        username = "";
+        password = "";
+        displayName = "";
+        alert("Logged out successfully!");
+    }
 </script>
 
 <div class="page-container">
@@ -79,6 +119,139 @@
             </tbody>
         </table>
 
+        <table
+            border="1"
+            cellpadding="10"
+            cellspacing="0"
+            bgcolor="#000033"
+            style="border: 3px ridge #ff00ff; width: 80%; margin-bottom: 20px;"
+        >
+            <tbody>
+                <tr>
+                    <td class="pink-text" colspan="2" align="center">
+                        <blink>☆</blink>
+                        <span style="font-weight: bold; font-size: 18px;"
+                            >ACCOUNT MANAGEMENT</span
+                        >
+                        <blink>☆</blink>
+                    </td>
+                </tr>
+                {#if !loggedIn}
+                    {#if !showRegisterForm}
+                        <tr>
+                            <td colspan="2">
+                                <form on:submit|preventDefault={login}>
+                                    <table width="100%">
+                                        <tbody>
+                                        <tr>
+                                            <td align="right" width="40%">username:</td>
+                                            <td align="left">
+                                                <input type="text" bind:value={username} />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right">password:</td>
+                                            <td align="left">
+                                                <input type="password" bind:value={password} />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" align="center" style="padding-top: 10px;">
+                                                <button type="submit" class="glowing-button">LOGIN</button>
+                                                <button type="button" class="glowing-button" on:click={() => showRegisterForm = true}>REGISTER</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    </table>
+                                </form>
+                            </td>
+                        </tr>
+                    {:else}
+                        <tr>
+                            <td colspan="2">
+                                <form on:submit|preventDefault={register}>
+                                    <table width="100%">
+                                        <tbody>
+                                        <tr>
+                                            <td align="right" width="40%">username:</td>
+                                            <td align="left">
+                                                <input type="text" bind:value={username} />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right">email:</td>
+                                            <td align="left">
+                                                <input type="email" bind:value={email} />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right">password:</td>
+                                            <td align="left">
+                                                <input type="password" bind:value={password} />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right">confirm password:</td>
+                                            <td align="left">
+                                                <input type="password" bind:value={confirmPassword} />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" align="center" style="padding-top: 10px;">
+                                                <button type="submit" class="glowing-button">CREATE ACCOUNT</button>
+                                                <button type="button" class="glowing-button" on:click={() => showRegisterForm = false}>BACK TO LOGIN</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    </table>
+                                </form>
+                            </td>
+                        </tr>
+                    {/if}
+                {:else}
+                    <tr>
+                        <td colspan="2">
+                            <div class="profile-section">
+                                <div class="profile-header">
+                                    <img src="sparkles.gif" alt="sparkles" class="sparkle-gif" />
+                                    <span class="yellow-text" style="font-size: 18px;">welcome back, {displayName}!</span>
+                                    <img src="sparkles.gif" alt="sparkles" class="sparkle-gif" />
+                                </div>
+                                
+                                <table width="100%" class="profile-options">
+                                    <tbody>
+                                    <tr>
+                                        <td align="right" width="40%">display name:</td>
+                                        <td align="left">
+                                            <input type="text" bind:value={displayName} />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">change password:</td>
+                                        <td align="left">
+                                            <button class="small-button">CHANGE</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">notification settings:</td>
+                                        <td align="left">
+                                            <input type="checkbox" checked /> receive updates
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" align="center" style="padding-top: 15px;">
+                                            <button class="glowing-button" on:click={logout}>LOGOUT</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                {/if}
+            </tbody>
+        </table>
+
         <form on:submit|preventDefault={saveSettings}>
             <table
                 border="1"
@@ -101,6 +274,15 @@
                                 bind:checked={$userSettings.nsfw}
                             />
                         </td>
+                    </tr>
+                    <tr>
+                        <td>Default tags</td>
+                        <td>
+                            <input
+                                type="text"
+                                bind:value={$userSettings.defaultTags}
+                                placeholder="e.g. yuri, cute"
+                            />
                     </tr>
                     <tr>
                         <td>Grid Layout</td>
@@ -213,6 +395,23 @@
         background-repeat: repeat;
         background-attachment: fixed;
         background-size: auto;
+    }
+
+    .profile-section {
+        padding: 5px;
+    }
+
+    .profile-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .profile-options {
+        border-top: 1px dashed #ff00ff;
+        padding-top: 10px;
     }
 
     * {

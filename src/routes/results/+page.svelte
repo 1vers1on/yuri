@@ -4,6 +4,8 @@
     import { userSettings } from "$lib/stores";
     import { getPosts } from "$lib/api";
     import { goto } from "$app/navigation";
+    import Grid from "$lib/components/grid.svelte";
+    import List from "$lib/components/list.svelte";
 
     interface ResultItem {
         id: number;
@@ -29,7 +31,7 @@
                 id: 2,
                 artist: "test",
                 tags: ["test", "test"],
-                filename: "https://placecats.com/millie/300/200",
+                filename: "https://placecats.com/neo/300/200",
             },
         ],
         nResults: 2,
@@ -78,7 +80,7 @@
 
             updateURL(query, page, limit, order);
 
-            results = await getPosts(query, page, limit, order);
+            // results = await getPosts(query, page, limit, order);
 
             searching = false;
         } catch (err) {
@@ -306,41 +308,9 @@
                 <p class="cyan-text">LOADING...</p>
             </blink>
         {:else if $userSettings.gridLayout}
-            <div class="results-container-grid">
-                {#each results.posts as result}
-                    <div
-                        class="result-item-grid"
-                        onclick={() => show(result)}
-                    >
-                        <p class="result-title-grid">{result.artist}</p>
-                        <img
-                            src={"http://localhost:3001/" + result.filename}
-                            alt={result.artist}
-                            class="result-image-grid"
-                            style="image-rendering: auto !important;"
-                        />
-                    </div>
-                {/each}
-            </div>
+            <Grid results={results.posts} onItemClick={show} />
         {:else}
-            <div class="results-container">
-                {#each results.posts as result}
-                    <div class="result-item" onclick={() => show(result)}>
-                        <p class="result-title">{result.artist}</p>
-                        <img
-                            src={"http://localhost:3001/" + result.filename}
-                            alt={result.artist}
-                            class="result-image"
-                            style="image-rendering: auto !important;"
-                        />
-                        <!-- <div class="tags">
-                            {#each result.tags as tag}
-                                <span class="tag">{tag}</span>
-                            {/each}
-                        </div> -->
-                    </div>
-                {/each}
-            </div>
+            <List results={results.posts} onItemClick={show} />
         {/if}
 
         <div class="pagination">
