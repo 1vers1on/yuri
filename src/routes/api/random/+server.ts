@@ -9,10 +9,10 @@ export async function GET({ url }) {
     const whereClause = nsfw
         ? {}
         : {
-            rating: {
-                in: ["s", "g"],
-            }
-        };
+              rating: {
+                  in: ["s", "g"],
+              },
+          };
 
     const totalPosts = await prisma.yuri.count({
         where: whereClause,

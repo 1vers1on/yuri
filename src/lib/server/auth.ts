@@ -25,7 +25,6 @@ async function createRefreshToken(userId: number) {
 
     const token = generateToken();
 
-
     const refreshToken = await prisma.refreshToken.create({
         data: {
             userId: user.id,
@@ -61,15 +60,15 @@ async function refresh(refreshToken: string) {
     if (!process.env.JWT_SECRET) {
         throw new Error("JWT_SECRET environment variable is not defined");
     }
-    
+
     const token = jwt.sign(
         { id: user.id, username: user.username },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "1h" },
     );
 
     return {
-        token
+        token,
     };
 }
 
@@ -83,19 +82,8 @@ async function register(username: string, password: string) {
     });
 
     const refreshToken = await createRefreshToken(user.id);
-    
-    if (!process.env.JWT_SECRET) {
-        throw new Error("JWT_SECRET environment variable is not defined");
-    }
-
-    const token = jwt.sign(
-        { id: user.id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-    );
 
     return {
-        token,
         refreshToken,
     };
 }
@@ -116,18 +104,14 @@ async function login(username: string, password: string) {
 
     const refreshToken = await createRefreshToken(user.id);
 
-    if (!process.env.JWT_SECRET) {
-        throw new Error("JWT_SECRET environment variable is not defined");
-    }
-
-    const token = jwt.sign(
-        { id: user.id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-    );
-
     return {
-        token,
         refreshToken,
     };
 }
+
+export {
+    register,
+    login,
+    refresh,
+    createRefreshToken,
+};

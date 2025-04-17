@@ -2,7 +2,21 @@ import { ExpiringMap } from "expiring-types";
 import svgCaptcha from "svg-captcha";
 import { randomBytes } from "crypto";
 
-const captchaStore = new ExpiringMap<string, string>(5 * 60 * 1000);
+interface idk {
+    text: string;
+    valid: boolean;
+}
+
+const captchaStore = new ExpiringMap<string, idk>(5 * 60 * 1000);
+
+export function isValid(token: string): boolean {
+    const valid = captchaStore.get(token)?.valid;
+    if (valid) {
+        captchaStore.delete(token);
+    }
+
+    return valid === true;
+}
 
 function generateToken() {
     const token = randomBytes(16).toString("hex");
@@ -22,7 +36,10 @@ export function generateCaptcha() {
 
     const token = generateToken();
 
-    captchaStore.set(token, captcha.text);
+    captchaStore.set(token, {
+        text: captcha.text,
+        valid: false,
+    });
 
     return {
         data: captcha.data,
@@ -31,7 +48,7 @@ export function generateCaptcha() {
 }
 
 export function validateCaptcha(token: string, text: string): boolean {
-    const storedText = captchaStore.get(token);
+    const storedText = captchaStore.get(token)?.text;
 
     if (!storedText) {
         return false;
@@ -40,7 +57,10 @@ export function validateCaptcha(token: string, text: string): boolean {
     const isValid = storedText.toLowerCase() === text.toLowerCase();
 
     if (isValid) {
-        captchaStore.delete(token);
+        captchaStore.set(token, {
+            text: storedText,
+            valid: true,
+        });
     }
 
     return isValid;
