@@ -1,26 +1,31 @@
-import { userSettings } from '$lib/stores';
-import { get } from 'svelte/store';
+import { userSettings } from "$lib/stores";
+import { get } from "svelte/store";
 
-export async function getPosts(tags: string, page: number, limit: number, sort: string) {
-    const url = new URL('/api/posts', window.location.origin);
+export async function getPosts(
+    tags: string,
+    page: number,
+    limit: number,
+    sort: string,
+) {
+    const url = new URL("/api/posts", window.location.origin);
     if (get(userSettings).defaultTags) {
-        tags = tags + ' ' + get(userSettings).defaultTags;
+        tags = tags + " " + get(userSettings).defaultTags;
     }
-    url.searchParams.set('tags', tags);
-    url.searchParams.set('page', page.toString());
-    url.searchParams.set('limit', limit.toString());
-    url.searchParams.set('order', sort);
+    url.searchParams.set("tags", tags);
+    url.searchParams.set("page", page.toString());
+    url.searchParams.set("limit", limit.toString());
+    url.searchParams.set("order", sort);
     const settings = get(userSettings);
     if (!settings.nsfw) {
-        url.searchParams.set('nsfw', 'false');
+        url.searchParams.set("nsfw", "false");
     } else {
-        url.searchParams.set('nsfw', 'true');
+        url.searchParams.set("nsfw", "true");
     }
 
     const response = await fetch(url.toString(), {
         headers: {
-            'Content-Type': 'application/json'
-        }
+            "Content-Type": "application/json",
+        },
     });
 
     if (!response.ok) {
@@ -32,13 +37,13 @@ export async function getPosts(tags: string, page: number, limit: number, sort: 
 }
 
 export async function getPost(id: string) {
-    const url = new URL('/api/info', window.location.origin);
-    url.searchParams.set('id', id);
+    const url = new URL("/api/info", window.location.origin);
+    url.searchParams.set("id", id);
 
     const response = await fetch(url.toString(), {
         headers: {
-            'Content-Type': 'application/json'
-        }
+            "Content-Type": "application/json",
+        },
     });
 
     if (!response.ok) {
@@ -50,13 +55,12 @@ export async function getPost(id: string) {
 }
 
 export async function getToday() {
-    const url = new URL('/api/today', window.location.origin);
-
+    const url = new URL("/api/today", window.location.origin);
 
     const response = await fetch(url.toString(), {
         headers: {
-            'Content-Type': 'application/json'
-        }
+            "Content-Type": "application/json",
+        },
     });
 
     if (!response.ok) {
@@ -68,13 +72,12 @@ export async function getToday() {
 }
 
 export async function getRandom() {
-    const url = new URL('/api/random', window.location.origin);
-
+    const url = new URL("/api/random", window.location.origin);
 
     const response = await fetch(url.toString(), {
         headers: {
-            'Content-Type': 'application/json'
-        }
+            "Content-Type": "application/json",
+        },
     });
 
     if (!response.ok) {

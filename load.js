@@ -1,18 +1,18 @@
 // load-yuri.js
-import { PrismaClient } from './generated/prisma/client.js';
-import fs from 'fs/promises';
-import path from 'path';
+import { PrismaClient } from "./generated/prisma/client.js";
+import fs from "fs/promises";
+import path from "path";
 
 const prisma = new PrismaClient();
 
-const filePath = path.resolve('./metadata_out.json');
+const filePath = path.resolve("./metadata_out.json");
 
 async function main() {
-    console.log('reading data...');
-    const file = await fs.readFile(filePath, 'utf-8');
+    console.log("reading data...");
+    const file = await fs.readFile(filePath, "utf-8");
     const data = JSON.parse(file);
 
-    console.log('clearing existing db...');
+    console.log("clearing existing db...");
     await prisma.yuriTag.deleteMany({});
     await prisma.tag.deleteMany({});
     await prisma.yuri.deleteMany({});
@@ -21,14 +21,14 @@ async function main() {
 
     const seenHashes = new Set();
 
-    console.log('importing yuri...');
+    console.log("importing yuri...");
     for (const [filename, entry] of Object.entries(data)) {
         const { hash, rating, source, artist, tags } = entry;
 
         const tagList = tags
             .split(/[ ,]+/)
-            .map(t => t.trim().toLowerCase())
-            .filter(t => t.length > 0);
+            .map((t) => t.trim().toLowerCase())
+            .filter((t) => t.length > 0);
 
         const tagConnections = [];
         const seenTagIds = new Set();
@@ -39,7 +39,7 @@ async function main() {
                 const tagEntry = await prisma.tag.upsert({
                     where: { tag },
                     update: {},
-                    create: { tag }
+                    create: { tag },
                 });
                 tagId = tagEntry.id;
                 tagCache.set(tag, tagId);
@@ -61,20 +61,20 @@ async function main() {
                 tags: {
                     create: tagConnections.map(({ tagId }) => ({
                         tag: {
-                            connect: { id: tagId }
-                        }
-                    }))
-                }
-            }
+                            connect: { id: tagId },
+                        },
+                    })),
+                },
+            },
         });
     }
 
-    console.log('done!');
+    console.log("done!");
 }
 
 main()
-    .catch(e => {
-        console.error('error loading data:', e);
+    .catch((e) => {
+        console.error("error loading data:", e);
         process.exit(1);
     })
     .finally(() => prisma.$disconnect());

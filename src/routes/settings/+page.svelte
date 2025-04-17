@@ -15,7 +15,6 @@
     let email = $state("");
     let displayName = $state("");
     let showRegisterForm = $state(false);
-    
 
     function saveSettings() {
         localStorage.setItem("userSettings", JSON.stringify(settings));
@@ -143,25 +142,47 @@
                                 <form on:submit|preventDefault={login}>
                                     <table width="100%">
                                         <tbody>
-                                        <tr>
-                                            <td align="right" width="40%">username:</td>
-                                            <td align="left">
-                                                <input type="text" bind:value={username} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td align="right">password:</td>
-                                            <td align="left">
-                                                <input type="password" bind:value={password} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" align="center" style="padding-top: 10px;">
-                                                <button type="submit" class="glowing-button">LOGIN</button>
-                                                <button type="button" class="glowing-button" on:click={() => showRegisterForm = true}>REGISTER</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                            <tr>
+                                                <td align="right" width="40%"
+                                                    >username:</td
+                                                >
+                                                <td align="left">
+                                                    <input
+                                                        type="text"
+                                                        bind:value={username}
+                                                    />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="right">password:</td>
+                                                <td align="left">
+                                                    <input
+                                                        type="password"
+                                                        bind:value={password}
+                                                    />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    colspan="2"
+                                                    align="center"
+                                                    style="padding-top: 10px;"
+                                                >
+                                                    <button
+                                                        type="submit"
+                                                        class="glowing-button"
+                                                        >LOGIN</button
+                                                    >
+                                                    <button
+                                                        type="button"
+                                                        class="glowing-button"
+                                                        on:click={() =>
+                                                            (showRegisterForm = true)}
+                                                        >REGISTER</button
+                                                    >
+                                                </td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </form>
                             </td>
@@ -172,37 +193,69 @@
                                 <form on:submit|preventDefault={register}>
                                     <table width="100%">
                                         <tbody>
-                                        <tr>
-                                            <td align="right" width="40%">username:</td>
-                                            <td align="left">
-                                                <input type="text" bind:value={username} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td align="right">email:</td>
-                                            <td align="left">
-                                                <input type="email" bind:value={email} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td align="right">password:</td>
-                                            <td align="left">
-                                                <input type="password" bind:value={password} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td align="right">confirm password:</td>
-                                            <td align="left">
-                                                <input type="password" bind:value={confirmPassword} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" align="center" style="padding-top: 10px;">
-                                                <button type="submit" class="glowing-button">CREATE ACCOUNT</button>
-                                                <button type="button" class="glowing-button" on:click={() => showRegisterForm = false}>BACK TO LOGIN</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                            <tr>
+                                                <td align="right" width="40%"
+                                                    >username:</td
+                                                >
+                                                <td align="left">
+                                                    <input
+                                                        type="text"
+                                                        bind:value={username}
+                                                    />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="right">email:</td>
+                                                <td align="left">
+                                                    <input
+                                                        type="email"
+                                                        bind:value={email}
+                                                    />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="right">password:</td>
+                                                <td align="left">
+                                                    <input
+                                                        type="password"
+                                                        bind:value={password}
+                                                    />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="right"
+                                                    >confirm password:</td
+                                                >
+                                                <td align="left">
+                                                    <input
+                                                        type="password"
+                                                        bind:value={
+                                                            confirmPassword
+                                                        }
+                                                    />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    colspan="2"
+                                                    align="center"
+                                                    style="padding-top: 10px;"
+                                                >
+                                                    <button
+                                                        type="submit"
+                                                        class="glowing-button"
+                                                        >CREATE ACCOUNT</button
+                                                    >
+                                                    <button
+                                                        type="button"
+                                                        class="glowing-button"
+                                                        on:click={() =>
+                                                            (showRegisterForm = false)}
+                                                        >BACK TO LOGIN</button
+                                                    >
+                                                </td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </form>
                             </td>
@@ -213,37 +266,71 @@
                         <td colspan="2">
                             <div class="profile-section">
                                 <div class="profile-header">
-                                    <img src="sparkles.gif" alt="sparkles" class="sparkle-gif" />
-                                    <span class="yellow-text" style="font-size: 18px;">welcome back, {displayName}!</span>
-                                    <img src="sparkles.gif" alt="sparkles" class="sparkle-gif" />
+                                    <img
+                                        src="sparkles.gif"
+                                        alt="sparkles"
+                                        class="sparkle-gif"
+                                    />
+                                    <span
+                                        class="yellow-text"
+                                        style="font-size: 18px;"
+                                        >welcome back, {displayName}!</span
+                                    >
+                                    <img
+                                        src="sparkles.gif"
+                                        alt="sparkles"
+                                        class="sparkle-gif"
+                                    />
                                 </div>
-                                
+
                                 <table width="100%" class="profile-options">
                                     <tbody>
-                                    <tr>
-                                        <td align="right" width="40%">display name:</td>
-                                        <td align="left">
-                                            <input type="text" bind:value={displayName} />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="right">change password:</td>
-                                        <td align="left">
-                                            <button class="small-button">CHANGE</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="right">notification settings:</td>
-                                        <td align="left">
-                                            <input type="checkbox" checked /> receive updates
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" align="center" style="padding-top: 15px;">
-                                            <button class="glowing-button" on:click={logout}>LOGOUT</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
+                                        <tr>
+                                            <td align="right" width="40%"
+                                                >display name:</td
+                                            >
+                                            <td align="left">
+                                                <input
+                                                    type="text"
+                                                    bind:value={displayName}
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right"
+                                                >change password:</td
+                                            >
+                                            <td align="left">
+                                                <button class="small-button"
+                                                    >CHANGE</button
+                                                >
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right"
+                                                >notification settings:</td
+                                            >
+                                            <td align="left">
+                                                <input
+                                                    type="checkbox"
+                                                    checked
+                                                /> receive updates
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                colspan="2"
+                                                align="center"
+                                                style="padding-top: 15px;"
+                                            >
+                                                <button
+                                                    class="glowing-button"
+                                                    on:click={logout}
+                                                    >LOGOUT</button
+                                                >
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </td>
@@ -283,7 +370,8 @@
                                 bind:value={$userSettings.defaultTags}
                                 placeholder="e.g. yuri, cute"
                             />
-                    </tr>
+                        </td></tr
+                    >
                     <tr>
                         <td>Grid Layout</td>
                         <td>

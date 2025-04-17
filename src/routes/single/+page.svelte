@@ -50,9 +50,7 @@
             navigator
                 .share(shareData)
                 .then(() => console.log("Post shared successfully"))
-                .catch((error) =>
-                    console.error("Error sharing post:", error)
-                );
+                .catch((error) => console.error("Error sharing post:", error));
         } else {
             alert("Sharing not supported on this browser.");
         }
@@ -60,11 +58,11 @@
 
     let isFavorite = $state(false);
     let favoriteText = $state("FAVORITE");
-    
+
     $effect(() => {
         favoriteText = isFavorite ? "UNFAVORITE" : "FAVORITE";
     });
-    
+
     function toggleFavorite() {
         if (isFavorite) {
             favorites.remove(String(post.id));
@@ -205,7 +203,8 @@
 
                 <div class="post-actions">
                     <button class="action-button" onclick={toggleFavorite}>
-                        <span class="star yellow">★</span> {favoriteText}
+                        <span class="star yellow">★</span>
+                        {favoriteText}
                     </button>
                     <button class="action-button" onclick={download}>
                         <span class="star green">★</span> DOWNLOAD

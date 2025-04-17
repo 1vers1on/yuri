@@ -1,5 +1,5 @@
-import { writable } from 'svelte/store';
-import { browser } from '$app/environment';
+import { writable } from "svelte/store";
+import { browser } from "$app/environment";
 
 export interface UserSettings {
     gridLayout: boolean;
@@ -13,10 +13,12 @@ const defaultSettings: UserSettings = {
     defaultTags: "",
 };
 
-
 function createSettingsStore() {
     const initialSettings = browser
-        ? JSON.parse(localStorage.getItem('userSettings') || JSON.stringify(defaultSettings))
+        ? JSON.parse(
+              localStorage.getItem("userSettings") ||
+                  JSON.stringify(defaultSettings),
+          )
         : defaultSettings;
 
     const { subscribe, set, update } = writable<UserSettings>(initialSettings);
@@ -26,14 +28,17 @@ function createSettingsStore() {
         set: (settings: UserSettings) => {
             set(settings);
             if (browser) {
-                localStorage.setItem('userSettings', JSON.stringify(settings));
+                localStorage.setItem("userSettings", JSON.stringify(settings));
             }
         },
         update: (updaterFn: (settings: UserSettings) => UserSettings) => {
-            update(settings => {
+            update((settings) => {
                 const updatedSettings = updaterFn(settings);
                 if (browser) {
-                    localStorage.setItem('userSettings', JSON.stringify(updatedSettings));
+                    localStorage.setItem(
+                        "userSettings",
+                        JSON.stringify(updatedSettings),
+                    );
                 }
                 return updatedSettings;
             });
@@ -41,48 +46,63 @@ function createSettingsStore() {
         reset: () => {
             set(defaultSettings);
             if (browser) {
-                localStorage.setItem('userSettings', JSON.stringify(defaultSettings));
+                localStorage.setItem(
+                    "userSettings",
+                    JSON.stringify(defaultSettings),
+                );
             }
-        }
+        },
     };
 }
 
 function createFavoritesStore() {
     const initialFavorites = browser
-        ? JSON.parse(localStorage.getItem('favorites') || '[]')
+        ? JSON.parse(localStorage.getItem("favorites") || "[]")
         : [];
 
     const { subscribe, set, update } = writable<string[]>(initialFavorites);
 
     return {
         subscribe,
-        add: (id: string) => update(favorites => {
-            const updatedFavorites = [...favorites, id];
-            if (browser) {
-                localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-            }
-            return updatedFavorites;
-        }),
-        remove: (id: string) => update(favorites => {
-            const updatedFavorites = favorites.filter(favId => favId !== id);
-            if (browser) {
-                localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-            }
-            return updatedFavorites;
-        }),
+        add: (id: string) =>
+            update((favorites) => {
+                const updatedFavorites = [...favorites, id];
+                if (browser) {
+                    localStorage.setItem(
+                        "favorites",
+                        JSON.stringify(updatedFavorites),
+                    );
+                }
+                return updatedFavorites;
+            }),
+        remove: (id: string) =>
+            update((favorites) => {
+                const updatedFavorites = favorites.filter(
+                    (favId) => favId !== id,
+                );
+                if (browser) {
+                    localStorage.setItem(
+                        "favorites",
+                        JSON.stringify(updatedFavorites),
+                    );
+                }
+                return updatedFavorites;
+            }),
         has: (id: string) => {
             let favorites: string[] = [];
             if (browser) {
-                favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                favorites = JSON.parse(
+                    localStorage.getItem("favorites") || "[]",
+                );
             }
             return favorites.includes(id);
         },
         reset: () => {
             set([]);
             if (browser) {
-                localStorage.removeItem('favorites');
+                localStorage.removeItem("favorites");
             }
-        }
+        },
     };
 }
 

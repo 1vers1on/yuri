@@ -5,7 +5,7 @@
         tags: string[];
         filename: string;
     }[];
-    
+
     export let onItemClick: (result: {
         id: number;
         artist: string;
@@ -16,10 +16,7 @@
 
 <div class="results-container-grid">
     {#each results as result}
-        <div
-            class="result-item-grid"
-            on:click={() => onItemClick(result)}
-        >
+        <div class="result-item-grid" on:click={() => onItemClick(result)}>
             <p class="result-title-grid">{result.artist}</p>
             <img
                 src={result.filename}

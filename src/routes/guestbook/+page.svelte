@@ -57,7 +57,13 @@
             const res = await fetch("/api/guestbook", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
-                body: JSON.stringify({ name, email, website, message, cloudflareToken }),
+                body: JSON.stringify({
+                    name,
+                    email,
+                    website,
+                    message,
+                    cloudflareToken,
+                }),
             });
 
             if (!res.ok) {

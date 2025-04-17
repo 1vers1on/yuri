@@ -1,5 +1,4 @@
 <script lang="ts">
-
 </script>
 
 <!-- https://gifcity.carrd.co/#blinkies -->
@@ -8,9 +7,11 @@
     <center>
         <div class="header-banner">
             <blink
-                ><span class="star red">★</span><span class="star yellow">★</span
+                ><span class="star red">★</span><span class="star yellow"
+                    >★</span
                 ><span class="star green">★</span> YURI ARCHIVE
-                <span class="star green">★</span><span class="star yellow">★</span
+                <span class="star green">★</span><span class="star yellow"
+                    >★</span
                 ><span class="star red">★</span></blink
             >
         </div>
@@ -18,7 +19,9 @@
         <h1>
             <div class="title-thingy">
                 <img src="star.gif" />
-                <marquee scrollamount="10" behavior="alternate">ABOUT THIS SITE!!!</marquee>
+                <marquee scrollamount="10" behavior="alternate"
+                    >ABOUT THIS SITE!!!</marquee
+                >
                 <img src="star.gif" />
             </div>
         </h1>
@@ -72,43 +75,73 @@
                 <tr>
                     <td align="center">
                         <img src="beatingheart.gif" alt="heart" />
-                        <span class="pink-text">WELCOME TO THE YURI ARCHIVE!</span>
+                        <span class="pink-text"
+                            >WELCOME TO THE YURI ARCHIVE!</span
+                        >
                         <img src="beatingheart.gif" alt="heart" />
                     </td>
                 </tr>
                 <tr>
                     <td align="center" class="about-text">
-                        <p>
-                            yuri.
-                        </p>
-                        <p>
-                            its self explanatory.
-                        </p>
+                        <p>yuri.</p>
+                        <p>its self explanatory.</p>
                     </td>
                 </tr>
                 <tr>
                     <td align="center" class="blink-text">
-                        email me <a href="mailto:elliehartung@outlook.com"><img src="Cat.gif"></a>
+                        email me <a href="mailto:elliehartung@outlook.com"
+                            ><img src="Cat.gif" /></a
+                        >
                     </td>
                 </tr>
             </tbody>
         </table>
 
         <div style="margin-top: 20px;">
-            <a href="http://www.hat.net/abs/noclick/index.html">Dont click here</a>
-            <br>
-            <img src="https://www.counter12.com/img-248059WcZdAW4104-26.gif" alt="web counter" />
-            <br>
+            <a href="http://www.hat.net/abs/noclick/index.html"
+                >Dont click here</a
+            >
+            <br />
+            <img
+                src="https://www.counter12.com/img-248059WcZdAW4104-26.gif"
+                alt="web counter"
+            />
+            <br />
             <a href="/guestbook">
                 <img src="bguestbook.gif" alt="guestbook" />
             </a>
             <table border="0" cellpadding="3" align="center">
                 <tbody>
                     <tr>
-                        <td><img title="lesbi" style="image-rendering: pixelated;" src="lesbian.png" /></td>
-                        <td><img title="hicolor" style="image-rendering: pixelated;" src="hicolor.gif" /></td>
-                        <td><img title="trans rights" style="image-rendering: pixelated;" src="transnow2.gif" /></td>
-                        <td><img src="netscape1.gif" alt="netscape" width="88" height="31" /></td>
+                        <td
+                            ><img
+                                title="lesbi"
+                                style="image-rendering: pixelated;"
+                                src="lesbian.png"
+                            /></td
+                        >
+                        <td
+                            ><img
+                                title="hicolor"
+                                style="image-rendering: pixelated;"
+                                src="hicolor.gif"
+                            /></td
+                        >
+                        <td
+                            ><img
+                                title="trans rights"
+                                style="image-rendering: pixelated;"
+                                src="transnow2.gif"
+                            /></td
+                        >
+                        <td
+                            ><img
+                                src="netscape1.gif"
+                                alt="netscape"
+                                width="88"
+                                height="31"
+                            /></td
+                        >
                     </tr>
                 </tbody>
             </table>
@@ -200,15 +233,28 @@
     }
 
     @keyframes blinker {
-        50% { opacity: 0; }
+        50% {
+            opacity: 0;
+        }
     }
 
-    .star.red { color: #ff0000; }
-    .star.yellow { color: #ffff00; }
-    .star.green { color: #00ff00; }
+    .star.red {
+        color: #ff0000;
+    }
+    .star.yellow {
+        color: #ffff00;
+    }
+    .star.green {
+        color: #00ff00;
+    }
 
-    .cyan-text { color: #00ffff; }
-    .small-gray-text { font-size: 12px; color: #999999; }
+    .cyan-text {
+        color: #00ffff;
+    }
+    .small-gray-text {
+        font-size: 12px;
+        color: #999999;
+    }
 
     .nav-links {
         display: flex;

@@ -5,7 +5,7 @@
         tags: string[];
         filename: string;
     }[];
-    
+
     export let onItemClick: (result: {
         id: number;
         artist: string;
@@ -42,26 +42,26 @@
         padding: 10px;
         border: 3px dashed #ff69b4;
     }
-    
+
     .result-item {
         padding: 8px;
         border: 2px groove #00ff00;
         background-color: rgba(0, 0, 50, 0.5);
         cursor: pointer;
     }
-    
+
     .result-title {
         font-size: 18px;
         font-weight: bold;
         color: #ffff00;
     }
-    
+
     .result-image {
         width: 100%;
         max-width: 300px;
         margin-top: 10px;
     }
-    
+
     .tag {
         display: inline-block;
         background-color: #0f0;

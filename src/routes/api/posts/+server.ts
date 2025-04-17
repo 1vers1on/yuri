@@ -1,14 +1,14 @@
-import { json } from '@sveltejs/kit';
-import { PrismaClient } from '@prisma/client'
+import { json } from "@sveltejs/kit";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 function parseTags(raw: string | null) {
-    const tags = raw?.split('+') ?? [];
+    const tags = raw?.split("+") ?? [];
     const include: string[] = [];
     const exclude: string[] = [];
 
     for (const tag of tags) {
-        if (tag.startsWith('-')) exclude.push(tag.slice(1));
+        if (tag.startsWith("-")) exclude.push(tag.slice(1));
         else if (tag.length > 0) include.push(tag);
     }
 
@@ -16,50 +16,53 @@ function parseTags(raw: string | null) {
 }
 
 export async function GET({ url }) {
-    const { include, exclude } = parseTags(url.searchParams.get('tags'));
-    const nsfw = url.searchParams.get('nsfw') === 'true';
-    const page = parseInt(url.searchParams.get('page') || '1');
-    let limit = parseInt(url.searchParams.get('limit') || '50');
+    const { include, exclude } = parseTags(url.searchParams.get("tags"));
+    const nsfw = url.searchParams.get("nsfw") === "true";
+    const page = parseInt(url.searchParams.get("page") || "1");
+    let limit = parseInt(url.searchParams.get("limit") || "50");
     if (limit > 100) limit = 100;
 
-    const order = url.searchParams.get('order') || 'id_desc';
+    const order = url.searchParams.get("order") || "id_desc";
 
     const whereClause = {
         AND: [
-            nsfw ? {} : { rating: { in: ['g', 's'] } },
-            ...include.map(tag => ({
+            nsfw ? {} : { rating: { in: ["g", "s"] } },
+            ...include.map((tag) => ({
                 tags: {
                     some: {
                         tag: {
-                            tag: tag
-                        }
-                    }
-                }
+                            tag: tag,
+                        },
+                    },
+                },
             })),
-            ...exclude.map(tag => ({
+            ...exclude.map((tag) => ({
                 tags: {
                     none: {
                         tag: {
-                            tag: tag
-                        }
-                    }
-                }
-            }))
-        ]
+                            tag: tag,
+                        },
+                    },
+                },
+            })),
+        ],
     };
 
     const totalPosts = await prisma.yuri.count({ where: whereClause });
 
     let result: any[] = [];
 
-    if (order === 'random') {
+    if (order === "random") {
         if (totalPosts === 0) {
             result = [];
         } else {
             const randomPosts = [];
             const seenIds = new Set();
 
-            while (randomPosts.length < limit && randomPosts.length < totalPosts) {
+            while (
+                randomPosts.length < limit &&
+                randomPosts.length < totalPosts
+            ) {
                 const randomSkip = Math.floor(Math.random() * totalPosts);
 
                 const post = await prisma.yuri.findFirst({
@@ -67,11 +70,11 @@ export async function GET({ url }) {
                     include: {
                         tags: {
                             include: {
-                                tag: true
-                            }
-                        }
+                                tag: true,
+                            },
+                        },
                     },
-                    skip: randomSkip
+                    skip: randomSkip,
                 });
 
                 if (post && !seenIds.has(post.id)) {
@@ -87,20 +90,20 @@ export async function GET({ url }) {
 
         let orderBy = {};
         switch (order) {
-            case 'id_asc':
-                orderBy = { id: 'asc' };
+            case "id_asc":
+                orderBy = { id: "asc" };
                 break;
-            case 'id_desc':
-                orderBy = { id: 'desc' };
+            case "id_desc":
+                orderBy = { id: "desc" };
                 break;
-            case 'created_at_asc':
-                orderBy = { createdAt: 'asc' };
+            case "created_at_asc":
+                orderBy = { createdAt: "asc" };
                 break;
-            case 'created_at_desc':
-                orderBy = { createdAt: 'desc' };
+            case "created_at_desc":
+                orderBy = { createdAt: "desc" };
                 break;
             default:
-                orderBy = { id: 'desc' };
+                orderBy = { id: "desc" };
         }
 
         result = await prisma.yuri.findMany({
@@ -108,20 +111,20 @@ export async function GET({ url }) {
             include: {
                 tags: {
                     include: {
-                        tag: true
-                    }
-                }
+                        tag: true,
+                    },
+                },
             },
             orderBy,
             skip,
-            take: limit
+            take: limit,
         });
     }
 
     interface PostTag {
         tag: {
             tag: string;
-        }
+        };
     }
 
     interface YuriPost {
@@ -148,7 +151,7 @@ export async function GET({ url }) {
         rating: post.rating,
         source: post.source,
         artist: post.artist,
-        tags: post.tags.map(tag => tag.tag.tag),
+        tags: post.tags.map((tag) => tag.tag.tag),
     }));
 
     return json({
