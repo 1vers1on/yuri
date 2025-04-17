@@ -1,5 +1,4 @@
-import { userSettings } from "$lib/stores";
-import { get } from "svelte/store";
+import { userSettings } from "$lib/globalState";
 
 export async function getPosts(
     tags: string,
@@ -8,14 +7,14 @@ export async function getPosts(
     sort: string,
 ) {
     const url = new URL("/api/posts", window.location.origin);
-    if (get(userSettings).defaultTags) {
-        tags = tags + " " + get(userSettings).defaultTags;
+    if (userSettings.settings.defaultTags) {
+        tags = tags + " " + userSettings.settings.defaultTags;
     }
     url.searchParams.set("tags", tags);
     url.searchParams.set("page", page.toString());
     url.searchParams.set("limit", limit.toString());
     url.searchParams.set("order", sort);
-    const settings = get(userSettings);
+    const settings = userSettings.settings;
     if (!settings.nsfw) {
         url.searchParams.set("nsfw", "false");
     } else {
@@ -37,8 +36,7 @@ export async function getPosts(
 }
 
 export async function getPost(id: string) {
-    const url = new URL("/api/info", window.location.origin);
-    url.searchParams.set("id", id);
+    const url = new URL(`/api/info/${id}`, window.location.origin);
 
     const response = await fetch(url.toString(), {
         headers: {

@@ -4,22 +4,23 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function GET({ url }) {
-    const dateParam = url.searchParams.get("date");
-    const today = dateParam ? new Date(dateParam) : new Date();
-    const dateStr = today.toISOString().split("T")[0];
+    const nsfw = url.searchParams.get("nsfw") === "true";
 
-    const totalPosts = await prisma.yuri.count({
-        where: {
+    const whereClause = nsfw
+        ? {}
+        : {
             rating: {
                 in: ["s", "g"],
-            },
-        },
+            }
+        };
+
+    const totalPosts = await prisma.yuri.count({
+        where: whereClause,
     });
 
     if (totalPosts === 0) {
         return json({
             post: null,
-            date: dateStr,
         });
     }
 
@@ -28,11 +29,7 @@ export async function GET({ url }) {
 
     const post = await prisma.yuri.findFirst({
         skip: skipIndex,
-        where: {
-            rating: {
-                in: ["s", "g"],
-            },
-        },
+        where: whereClause,
         include: {
             tags: {
                 include: {
@@ -45,7 +42,6 @@ export async function GET({ url }) {
     if (!post) {
         return json({
             post: null,
-            date: dateStr,
         });
     }
 
@@ -60,6 +56,5 @@ export async function GET({ url }) {
 
     return json({
         post: formattedPost,
-        date: dateStr,
     });
 }

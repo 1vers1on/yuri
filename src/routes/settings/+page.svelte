@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { userSettings } from "$lib/stores";
+    import { userSettings } from "$lib/globalState";
     let settings = {
         theme: "dark",
         animations: true,
@@ -358,7 +358,7 @@
                         <td>
                             <input
                                 type="checkbox"
-                                bind:checked={$userSettings.nsfw}
+                                bind:checked={userSettings.settings.nsfw}
                             />
                         </td>
                     </tr>
@@ -367,7 +367,7 @@
                         <td>
                             <input
                                 type="text"
-                                bind:value={$userSettings.defaultTags}
+                                bind:value={userSettings.settings.defaultTags}
                                 placeholder="e.g. yuri, cute"
                             />
                         </td></tr
@@ -377,7 +377,7 @@
                         <td>
                             <input
                                 type="checkbox"
-                                bind:checked={$userSettings.gridLayout}
+                                bind:checked={userSettings.settings.gridLayout}
                             />
                         </td>
                     </tr>

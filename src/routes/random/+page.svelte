@@ -6,6 +6,6 @@
 
     onMount(async () => {
         const response = await getRandom();
-        goto(`/single?id=${response}`);
+        goto(`/post/${response}`);
     });
 </script>

@@ -3,12 +3,8 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET({ url }) {
-    const id = url.searchParams.get("id");
-
-    if (!id) {
-        throw error(400, "Missing required parameter: id");
-    }
+export async function GET({ params }) {
+    const id = params.slug;
 
     const post = await prisma.yuri.findUnique({
         where: { id },

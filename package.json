@@ -30,7 +30,6 @@
         "@prisma/client": "^6.6.0",
         "@types/jsonwebtoken": "^9.0.9",
         "bcrypt": "^5.1.1",
-        "captcha-canvas": "^2.3.1",
         "expiring-types": "^1.0.4",
         "jsonwebtoken": "^9.0.2",
         "sharp": "^0.34.1",

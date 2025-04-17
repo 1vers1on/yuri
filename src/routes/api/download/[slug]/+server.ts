@@ -3,8 +3,8 @@ import sharp from "sharp";
 import fs from "node:fs/promises";
 import path from "node:path";
 
-export async function GET({ url }) {
-    const id = url.searchParams.get("id");
+export async function GET({ params }) {
+    const id = params.slug;
 
     if (!id) {
         throw error(400, "missing id parameter");

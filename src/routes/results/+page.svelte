@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
-    import { userSettings } from "$lib/stores";
+    import { userSettings } from "$lib/globalState";
     import { getPosts } from "$lib/api";
     import { goto } from "$app/navigation";
     import Grid from "$lib/components/grid.svelte";
@@ -196,7 +196,7 @@
     }
 
     function show(result: ResultItem): void {
-        goto(`/single?id=${result.id}`);
+        goto(`/post/${result.id}`);
     }
 </script>
 
@@ -307,7 +307,7 @@
             <blink>
                 <p class="cyan-text">LOADING...</p>
             </blink>
-        {:else if $userSettings.gridLayout}
+        {:else if userSettings.settings.gridLayout}
             <Grid results={results.posts} onItemClick={show} />
         {:else}
             <List results={results.posts} onItemClick={show} />

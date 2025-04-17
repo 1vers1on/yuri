@@ -3,7 +3,9 @@
     import { browser } from "$app/environment";
     import { goto } from "$app/navigation";
     import { getPost } from "$lib/api";
-    import { favorites } from "$lib/stores";
+    import { favorites } from "$lib/globalState";
+
+    const data = $props();
 
     interface Post {
         id: number;
@@ -76,8 +78,7 @@
         if (!browser) return;
 
         try {
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get("id");
+            const id = data.slug;
 
             if (!id) {
                 notFound = true;
