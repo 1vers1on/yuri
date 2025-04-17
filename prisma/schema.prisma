@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
     provider        = "prisma-client-js"
 }
@@ -20,6 +14,7 @@ model Yuri {
     source   String @db.Text
     artist   String @db.Text
     tags     YuriTag[]
+    favorites Favorite[]
 }
 
 model Tag {
@@ -47,6 +42,26 @@ model Guestbook {
   createdAt DateTime @default(now())
 }
 
+enum Role {
+    USER
+    ADMIN
+    OWNER
+}
+
+model RefreshToken {
+    id        Int      @id @default(autoincrement())
+    token     String   @unique
+    expires   DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    valid     Boolean  @default(true)
+    
+    user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    Int
+
+    @@index([userId])
+}
+
 model Users {
     id        Int      @id @default(autoincrement())
     username  String   @unique
@@ -54,4 +69,19 @@ model Users {
     password  String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    role      Role     @default(USER)
+    favorites Favorite[]
+    refreshTokens RefreshToken[]
+}
+
+model Favorite {
+    user    Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId  Int
+    
+    yuri    Yuri  @relation(fields: [yuriId], references: [id], onDelete: Cascade)
+    yuriId  String
+    
+    createdAt DateTime @default(now())
+
+    @@id([userId, yuriId])
 }
