@@ -23,17 +23,17 @@ import {
 
 const API_RATE_LIMITS: Record<string, RateLimitConfig> = {
     default: {
-        maxRequests: 60,
+        maxRequests: 500,
         windowMs: 60 * 1000,
         prefix: "ratelimit:api",
     },
     search: {
-        maxRequests: 20,
+        maxRequests: 500,
         windowMs: 60 * 1000,
         prefix: "ratelimit:search",
     },
     random: {
-        maxRequests: 30,
+        maxRequests: 500,
         windowMs: 60 * 1000,
         prefix: "ratelimit:random",
     },
