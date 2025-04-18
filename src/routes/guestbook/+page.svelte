@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { writable } from "svelte/store";
+    import Marquee from "$lib/components/marquee.svelte";
 
     type Entry = {
         id: number;
@@ -13,7 +14,7 @@
 
     const entries = writable<Entry[]>([]);
     let loading = $state(false);
-    let error: Error | null = null;
+    let error = $state<Error | null>(null);
 
     let name = $state("");
     let email = $state("");
@@ -149,23 +150,23 @@
 <div class="page-container">
     <center>
         <div class="header-banner">
-            <blink
+            <div class="blink">
                 ><span class="star red">★</span><span class="star yellow"
                     >★</span
                 ><span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span><span class="star yellow"
                     >★</span
-                ><span class="star red">★</span></blink
+                ><span class="star red">★</span></div
             >
         </div>
 
         <h1>
             <div class="title-thingy">
-                <img src="star.gif" />
-                <marquee scrollamount="10" behavior="alternate"
-                    >GUESBOOK</marquee
+                <img src="/star.gif" alt="star" />
+                <Marquee scrollamount="10" behavior="alternate"
+                    >GUESBOOK</Marquee
                 >
-                <img src="star.gif" />
+                <img src="/star.gif" alt="star" />
             </div>
         </h1>
         <table
@@ -216,7 +217,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <form on:submit|preventDefault={submitEntry}>
+                        <form onsubmit={(e) => { e.preventDefault(); submitEntry(); }}>
                             <table
                                 cellpadding="5"
                                 style="margin:auto; width: 300px;"
@@ -332,28 +333,31 @@
                     <tr>
                         <td
                             ><img
+                                alt="lesbian"
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
-                                src="lesbian.png"
+                                src="/lesbian.png"
                             /></td
                         >
                         <td
                             ><img
+                                alt="hicolor"
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
-                                src="hicolor.gif"
+                                src="/hicolor.gif"
                             /></td
                         >
                         <td
                             ><img
+                                alt="trans rights"
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
-                                src="transnow2.gif"
+                                src="/transnow2.gif"
                             /></td
                         >
                         <td
                             ><img
-                                src="netscape1.gif"
+                                src="/netscape1.gif"
                                 alt="netscape"
                                 width="88"
                                 height="31"
@@ -377,7 +381,7 @@
     }
     :global(body) {
         color: white;
-        background: url("wallstars.gif") repeat;
+        background: url("/wallstars.gif") repeat;
         margin: 0;
         padding: 0;
         min-height: 100vh;
@@ -430,11 +434,7 @@
         margin-bottom: 15px;
     }
 
-    .popular-searches {
-        margin-top: 20px;
-    }
-
-    blink {
+    .blink {
         animation: blinker 1s step-start infinite;
     }
 
@@ -461,10 +461,6 @@
 
     .yellow-text {
         color: #ffff00;
-    }
-
-    .green-text {
-        color: #00ff00;
     }
 
     .small-gray-text {
@@ -557,12 +553,6 @@
     .entry-message {
         white-space: pre-wrap;
         color: #ffffff;
-    }
-
-    .turnstile-container {
-        display: inline-block;
-        width: auto;
-        min-height: 65px;
     }
 
     :global(.cf-turnstile iframe) {

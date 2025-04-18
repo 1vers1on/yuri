@@ -1,8 +1,7 @@
-import { json } from "@sveltejs/kit";
 import { getPosts, parseTags } from "$lib/server/serverApi";
+import type { PageServerLoad } from "./$types";
 
-
-export async function GET({ url }) {
+export const load: PageServerLoad = async ({ url }) => {
     const { include, exclude } = parseTags(url.searchParams.get("tags"));
     const nsfw = url.searchParams.get("nsfw") === "true";
     const page = parseInt(url.searchParams.get("page") || "1");
@@ -20,8 +19,8 @@ export async function GET({ url }) {
         order
     });
 
-    return json({
+    return {
         posts,
-        nResults: totalCount,
-    });
-}
+        nResults: totalCount
+    };
+};

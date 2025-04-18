@@ -1,30 +1,40 @@
 <script lang="ts">
     export let results: {
-        id: number;
-        artist: string;
-        tags: string[];
+        id: string;
         filename: string;
+        rating: string;
+        source: string | null;
+        artist: string | null;
+        tags: string[];
     }[];
 
     export let onItemClick: (result: {
-        id: number;
-        artist: string;
-        tags: string[];
+        id: string;
         filename: string;
+        rating: string;
+        source: string | null;
+        artist: string | null;
+        tags: string[];
     }) => void;
 </script>
 
 <div class="results-container-grid">
     {#each results as result}
-        <div class="result-item-grid" on:click={() => onItemClick(result)}>
+        <button
+            type="button"
+            class="result-item-grid"
+            on:click={() => onItemClick(result)}
+            on:keydown={(e) => e.key === 'Enter' && onItemClick(result)}
+        >
             <p class="result-title-grid">{result.artist}</p>
             <img
-                src={result.filename}
+                src={"http://localhost:3001/" + result.filename}
                 alt={result.artist}
                 class="result-image-grid"
                 style="image-rendering: auto !important;"
+                loading="lazy"
             />
-        </div>
+        </button>
     {/each}
 </div>
 

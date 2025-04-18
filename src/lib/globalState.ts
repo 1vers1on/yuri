@@ -31,6 +31,13 @@ function createSettingsStore() {
             }
             set(settings);
         },
+        get() {
+            let result: UserSettings = defaultSettings;
+            subscribe(settings => {
+                result = settings;
+            })();
+            return result;
+        },
         update(updaterFn: (settings: UserSettings) => UserSettings) {
             update(settings => {
                 const updatedSettings = updaterFn(settings);
@@ -75,6 +82,13 @@ function createFavoritesStore() {
                 }
                 return updatedFavorites;
             });
+        },
+        get() {
+            let result: string[] = [];
+            subscribe(favorites => {
+                result = favorites;
+            })();
+            return result;
         },
         has(id: string) {
             let result = false;

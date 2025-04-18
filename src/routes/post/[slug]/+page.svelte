@@ -2,14 +2,14 @@
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
     import { goto } from "$app/navigation";
-    import { getPost } from "$lib/api";
+    import { getPost, addUserFavorite, removeUserFavorite, isPostFavorite } from "$lib/api";
     import { favorites } from "$lib/globalState";
+    import Marquee from "$lib/components/marquee.svelte";
 
-    const data = $props();
+    const { data } = $props();
 
     interface Post {
-        id: number;
-        title: string;
+        id: string;
         tags: string[];
         filename: string;
         description?: string;
@@ -17,14 +17,9 @@
         author?: string;
     }
 
-    let post: Post = $state({
-        id: 1,
-        title: "Loading...",
-        tags: [],
-        filename: "",
-    });
+    let post: Post = data;
 
-    let isLoading = $state(true);
+    let isLoading = $state(false);
     let notFound = $state(false);
 
     function goBack() {
@@ -34,7 +29,7 @@
 
     function download() {
         const a = document.createElement("a");
-        a.href = `/api/download?id=${post.id}`;
+        a.href = `/api/post/${post.id}/download`;
         a.download = post.filename;
         document.body.appendChild(a);
         a.click();
@@ -65,56 +60,64 @@
         favoriteText = isFavorite ? "UNFAVORITE" : "FAVORITE";
     });
 
-    function toggleFavorite() {
+    async function toggleFavorite() {
         if (isFavorite) {
-            favorites.remove(String(post.id));
+            await removeUserFavorite(post.id);
         } else {
-            favorites.add(String(post.id));
+            await addUserFavorite(post.id);
         }
-        isFavorite = !isFavorite;
+        isFavorite = await isPostFavorite(post.id);
     }
 
     onMount(async () => {
         if (!browser) return;
-
-        try {
-            const id = data.slug;
-
-            if (!id) {
-                notFound = true;
-                return;
-            }
-            post = await getPost(id);
-            isLoading = false;
-
-            isFavorite = favorites.has(String(post.id));
-        } catch (err) {
-            console.error("Error fetching post:", err);
-            notFound = true;
-        }
+        setTimeout(async () => {
+            isFavorite = await isPostFavorite(post.id);
+        }, 100);
     });
+
+    function getFullImageUrl(filename: string) {
+        return browser ? new URL(`http://localhost:3001/${filename}`, window.location.origin).toString() : `http://localhost:3001/${filename}`;
+    }
 </script>
+
+<svelte:head>
+    {#if !notFound && post}
+        <script type="application/ld+json">
+        {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ImageObject",
+            "name": `YURI ARCHIVE - ${post.tags.join(", ")}`,
+            "description": post.description || `Yuri image with tags: ${post.tags.join(", ")}`,
+            "contentUrl": getFullImageUrl(post.filename),
+            "datePublished": post.uploadDate || new Date().toISOString(),
+            "author": post.author ? { "@type": "Person", "name": post.author } : undefined,
+            "keywords": post.tags.join(", ")
+        })}
+        </script>
+    {/if}
+</svelte:head>
 
 <div class="page-container">
     <center>
         <div class="header-banner">
-            <blink
-                ><span class="star red">★</span><span class="star yellow"
+            <div class="blink">
+                <span class="star red">★</span><span class="star yellow"
                     >★</span
                 ><span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span><span class="star yellow"
                     >★</span
-                ><span class="star red">★</span></blink
+                ><span class="star red">★</span></div
             >
         </div>
 
         <h1>
             <div class="title-thingy">
-                <img src="star.gif" alt="star" />
-                <marquee scrollamount="10" behavior="alternate"
-                    >YURI ARCHIVE</marquee
+                <img src="/star.gif" alt="star" />
+                <Marquee scrollamount="10" behavior="alternate"
+                    >YURI ARCHIVE</Marquee
                 >
-                <img src="star.gif" alt="star" />
+                <img src="/star.gif" alt="star" />
             </div>
         </h1>
 
@@ -158,7 +161,7 @@
 
         {#if isLoading}
             <div class="loading-container">
-                <blink><p class="cyan-text">LOADING POST...</p></blink>
+                <div class="blink"><p class="cyan-text">LOADING POST...</p></div>
             </div>
         {:else if notFound}
             <div class="not-found-container">
@@ -168,8 +171,6 @@
             </div>
         {:else}
             <div class="post-container">
-                <h2 class="post-title yellow-text">{post.title}</h2>
-
                 {#if post.author || post.uploadDate}
                     <div class="post-meta">
                         {#if post.author}<span class="green-text"
@@ -183,8 +184,8 @@
 
                 <div class="post-image-container">
                     <img
-                        src={"http://localhost:3001/" + post.filename}
-                        alt={post.title}
+                        src={getFullImageUrl(post.filename)}
+                        alt="Post"
                         class="post-image"
                         style="image-rendering: auto !important;"
                     />
@@ -233,28 +234,31 @@
                     <tr>
                         <td
                             ><img
+                                alt="lesbian"
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
-                                src="lesbian.png"
+                                src="/lesbian.png"
                             /></td
                         >
                         <td
                             ><img
+                                alt="hicolor"
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
-                                src="hicolor.gif"
+                                src="/hicolor.gif"
                             /></td
                         >
                         <td
                             ><img
+                                alt="trans rights"
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
-                                src="transnow2.gif"
+                                src="/transnow2.gif"
                             /></td
                         >
                         <td
                             ><img
-                                src="netscape1.gif"
+                                src="/netscape1.gif"
                                 alt="netscape"
                                 width="88"
                                 height="31"
@@ -278,7 +282,7 @@
     }
     :global(body) {
         color: white;
-        background: url("wallstars.gif") repeat;
+        background: url("/wallstars.gif") repeat;
         margin: 0;
         padding: 0;
         min-height: 100vh;
@@ -293,7 +297,7 @@
         margin: 0;
         padding: 0;
         height: 100%;
-        background: url("wallstars.gif");
+        background: url("/wallstars.gif");
         background-repeat: repeat;
         background-attachment: fixed;
         background-size: auto;
@@ -337,17 +341,13 @@
         color: #ff69b4;
     }
 
-    input {
-        font-family: monospace;
-    }
-
     .header-banner {
         font-size: 24px;
         font-weight: bold;
         margin-bottom: 15px;
     }
 
-    blink {
+    .blink {
         animation: blinker 1s step-start infinite;
     }
 
@@ -371,10 +371,6 @@
 
     .cyan-text {
         color: #00ffff;
-    }
-
-    .yellow-text {
-        color: #ffff00;
     }
 
     .green-text {
@@ -429,13 +425,7 @@
         max-width: 700px;
         background-color: rgba(0, 0, 50, 0.5);
     }
-
-    .post-title {
-        font-size: 24px;
-        margin-bottom: 10px;
-        text-shadow: 0 0 5px #ffff00;
-    }
-
+    
     .post-image-container {
         margin: 15px auto;
         padding: 5px;

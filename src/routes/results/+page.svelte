@@ -6,40 +6,29 @@
     import { goto } from "$app/navigation";
     import Grid from "$lib/components/grid.svelte";
     import List from "$lib/components/list.svelte";
+    import Marquee from "$lib/components/marquee.svelte";
 
-    interface ResultItem {
-        id: number;
-        artist: string;
-        tags: string[];
+    let { data } = $props();
+    
+    interface PostResult {
+        id: string;
         filename: string;
+        rating: string;
+        source: string | null;
+        artist: string | null;
+        tags: string[];
     }
 
     interface Results {
-        posts: ResultItem[];
+        posts: PostResult[];
         nResults: number;
     }
 
-    let results: Results = $state({
-        posts: [
-            {
-                id: 1,
-                artist: "test",
-                tags: ["test", "test", "test"],
-                filename: "https://placecats.com/neo/300/200",
-            },
-            {
-                id: 2,
-                artist: "test",
-                tags: ["test", "test"],
-                filename: "https://placecats.com/neo/300/200",
-            },
-        ],
-        nResults: 2,
-    });
+    let results: Results = data;
 
-    let query = "";
-    let page = 1;
-    let limit = 25;
+    let query = $state("");
+    let page = $state(1);
+    let limit = $state(25);
     let order = "random";
     let searching = $state(true);
     let totalPages = $state(1);
@@ -195,7 +184,7 @@
         if (page < totalPages) page++;
     }
 
-    function show(result: ResultItem): void {
+    function show(result: PostResult): void {
         goto(`/post/${result.id}`);
     }
 </script>
@@ -203,22 +192,22 @@
 <div class="page-container">
     <center>
         <div class="header-banner">
-            <blink
-                ><span class="star red">★</span><span class="star yellow"
+            <div class="blink">
+                <span class="star red">★</span><span class="star yellow"
                     >★</span
                 ><span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span><span class="star yellow"
                     >★</span
-                ><span class="star red">★</span></blink
+                ><span class="star red">★</span></div
             >
         </div>
 
         <h1>
             <div class="title-thingy">
-                <img src="star.gif" alt="star" />
-                <marquee scrollamount="10" behavior="alternate">RESULTS</marquee
+                <img src="/star.gif" alt="star" />
+                <Marquee scrollamount="10" behavior="alternate">RESULTS</Marquee
                 >
-                <img src="star.gif" alt="star" />
+                <img src="/star.gif" alt="star" />
             </div>
         </h1>
 
@@ -281,6 +270,8 @@
                     <div class="suggestion-list">
                         {#each suggestions as suggestion, i}
                             <div
+                                role="button"
+                                tabindex="0"
                                 class="suggestion-item {i === selectedIndex
                                     ? 'selected'
                                     : ''}"
@@ -304,9 +295,9 @@
         </form>
 
         {#if searching}
-            <blink>
+            <div class="blink">
                 <p class="cyan-text">LOADING...</p>
-            </blink>
+            </div>
         {:else if $userSettings.gridLayout}
             <Grid results={results.posts} onItemClick={show} />
         {:else}
@@ -342,28 +333,31 @@
                     <tr>
                         <td
                             ><img
+                                alt="lesbian"
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
-                                src="lesbian.png"
+                                src="/lesbian.png"
                             /></td
                         >
                         <td
                             ><img
+                                alt="hicolor"
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
-                                src="hicolor.gif"
+                                src="/hicolor.gif"
                             /></td
                         >
                         <td
                             ><img
+                                alt="trans rights"
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
-                                src="transnow2.gif"
+                                src="/transnow2.gif"
                             /></td
                         >
                         <td
                             ><img
-                                src="netscape1.gif"
+                                src="/netscape1.gif"
                                 alt="netscape"
                                 width="88"
                                 height="31"
@@ -390,7 +384,7 @@
     }
     :global(body) {
         color: white;
-        background: url("wallstars.gif") repeat;
+        background: url("/wallstars.gif") repeat;
         margin: 0;
         padding: 0;
         min-height: 100vh;
@@ -401,7 +395,7 @@
         margin: 0;
         padding: 0;
         height: 100%;
-        background: url("wallstars.gif");
+        background: url("/wallstars.gif");
         background-repeat: repeat;
         background-attachment: fixed;
         background-size: auto;
@@ -420,41 +414,6 @@
         margin-bottom: 15px;
         text-align: center;
     }
-    .results-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 20px;
-        padding: 10px;
-        border: 3px dashed #ff69b4;
-    }
-    .result-item {
-        /* margin-bottom: 15px; */
-        padding: 8px;
-        border: 2px groove #00ff00;
-        background-color: rgba(0, 0, 50, 0.5);
-        cursor: pointer;
-    }
-    .result-title {
-        font-size: 18px;
-        font-weight: bold;
-        color: #ffff00;
-    }
-    .result-image {
-        width: 100%;
-        max-width: 300px;
-        margin-top: 10px;
-    }
-    .tag {
-        display: inline-block;
-        background-color: #0f0;
-        color: black;
-        padding: 2px 5px;
-        margin: 2px;
-        font-size: 12px;
-        border-radius: 4px;
-        font-family: monospace;
-    }
     .pagination {
         margin-top: 20px;
     }
@@ -464,40 +423,6 @@
         border: 2px outset #f0f;
         padding: 5px 10px;
         margin: 0 5px;
-    }
-    .lightbox-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-    .lightbox-content {
-        background: #111;
-        padding: 20px;
-        border: 3px ridge #ff69b4;
-        position: relative;
-        text-align: center;
-    }
-    .lightbox-content img {
-        max-width: 90vw;
-        max-height: 80vh;
-    }
-    .close-button {
-        position: absolute;
-        top: 5px;
-        right: 10px;
-        font-size: 24px;
-        cursor: pointer;
-        color: #ff69b4;
-    }
-    .blink-animation {
-        animation: blinker 1s step-start infinite;
     }
     @keyframes blinker {
         50% {
@@ -516,12 +441,6 @@
     .cyan-text {
         color: #00ffff;
     }
-    .yellow-text {
-        color: #ffff00;
-    }
-    .green-text {
-        color: #00ff00;
-    }
     .small-gray-text {
         font-size: 12px;
         color: #999999;
@@ -531,24 +450,6 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-    }
-    .scrolling-title {
-        font-size: 24px;
-        font-weight: bold;
-        color: #ff69b4;
-        animation: scroll-text 8s linear infinite alternate;
-    }
-    .star-icon {
-        color: #ffff00;
-        font-size: 24px;
-    }
-    @keyframes scroll-text {
-        0% {
-            transform: translateX(-20px);
-        }
-        100% {
-            transform: translateX(20px);
-        }
     }
 
     .autocomplete-wrapper {
@@ -600,67 +501,8 @@
         z-index: 100;
     }
 
-    blink {
+    .blink {
         animation: blinker 1s step-start infinite;
-    }
-
-    .results-container-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 15px;
-        margin-top: 20px;
-        padding: 10px;
-        border: 3px dashed #ff69b4;
-        /* width: 100%; */
-    }
-
-    .result-item-grid {
-        padding: 8px;
-        border: 2px groove #00ff00;
-        background-color: rgba(0, 0, 50, 0.5);
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .result-title-grid {
-        font-size: 16px;
-        font-weight: bold;
-        color: #ffff00;
-        margin-bottom: 5px;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        width: 100%;
-    }
-
-    .result-image-grid {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
-        margin: 5px 0;
-        border: 1px solid #00ff00;
-    }
-
-    .tags-grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        max-width: 100%;
-        overflow: hidden;
-    }
-
-    @media (max-width: 600px) {
-        .results-container-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (min-width: 1000px) {
-        .results-container-grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
     }
 
     .nav-links {

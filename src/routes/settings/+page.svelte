@@ -1,7 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { userSettings } from "$lib/globalState";
-    import { registerUser } from "$lib/auth";
+    import { registerUser, accessTokenStore } from "$lib/auth";
+    import Marquee from "$lib/components/marquee.svelte";
+
     let settings = {
         theme: "dark",
         animations: true,
@@ -33,6 +35,13 @@
                 "Content-Type": "application/json",
             },
         });
+
+        accessTokenStore.subscribe((token) => {
+            if (token) {
+                loggedIn = true;
+            }
+        });
+
 
         const data = await response.json();
         captchaHtml = data.data;
@@ -98,20 +107,20 @@
 <div class="page-container">
     <center>
         <div class="header-banner">
-            <blink>
+            <div class="blink">
                 <span class="star red">★</span>
                 <span class="star yellow">★</span>
                 <span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span>
                 <span class="star yellow">★</span>
                 <span class="star red">★</span>
-            </blink>
+            </div>
         </div>
 
         <h1 class="title-thingy">
-            <img src="star.gif" />
-            <marquee scrollamount="10" behavior="alternate">SETTINGS</marquee>
-            <img src="star.gif" />S
+            <img src="/star.gif" alt="star" />
+            <Marquee scrollamount="10" behavior="alternate">SETTINGS</Marquee>
+            <img src="/star.gif" alt="star" />
         </h1>
 
         <table
@@ -162,18 +171,18 @@
             <tbody>
                 <tr>
                     <td class="pink-text" colspan="2" align="center">
-                        <blink>☆</blink>
+                        <div class="blink">☆</div>
                         <span style="font-weight: bold; font-size: 18px;"
                             >ACCOUNT MANAGEMENT</span
                         >
-                        <blink>☆</blink>
+                        <div class="blink">☆</div>
                     </td>
                 </tr>
                 {#if !loggedIn}
                     {#if !showRegisterForm}
                         <tr>
                             <td colspan="2">
-                                <form on:submit|preventDefault={login}>
+                                <form onsubmit={(e) => { e.preventDefault(); login(); }}>
                                     <table width="100%">
                                         <tbody>
                                             <tr>
@@ -210,7 +219,7 @@
                                                     <button
                                                         type="button"
                                                         class="glowing-button"
-                                                        on:click={() =>
+                                                        onclick={() =>
                                                             (showRegisterForm = true)}
                                                         >REGISTER</button
                                                     >
@@ -224,7 +233,7 @@
                     {:else}
                         <tr>
                             <td colspan="2">
-                                <form on:submit|preventDefault={register}>
+                                <form onsubmit={(e) => { e.preventDefault(); register(); }}>
                                     <table width="100%">
                                         <tbody>
                                             <tr>
@@ -288,7 +297,7 @@
                                                     <button
                                                         type="button"
                                                         class="glowing-button"
-                                                        on:click={() =>
+                                                        onclick={() =>
                                                             (showRegisterForm = false)}
                                                         >BACK TO LOGIN</button
                                                     >
@@ -305,37 +314,21 @@
                         <td colspan="2">
                             <div class="profile-section">
                                 <div class="profile-header">
-                                    <img
-                                        src="sparkles.gif"
-                                        alt="sparkles"
-                                        class="sparkle-gif"
-                                    />
                                     <span
                                         class="yellow-text"
                                         style="font-size: 18px;"
                                         >welcome back, {displayName}!</span
                                     >
-                                    <img
-                                        src="sparkles.gif"
-                                        alt="sparkles"
-                                        class="sparkle-gif"
-                                    />
                                 </div>
 
                                 <table width="100%" class="profile-options">
                                     <tbody>
                                         <tr>
-                                            <td align="right" width="40%"
-                                                >display name:</td
+                                            <td align="center" width="40%"
+                                                >this does nothing yet</td
                                             >
-                                            <td align="left">
-                                                <input
-                                                    type="text"
-                                                    bind:value={displayName}
-                                                />
-                                            </td>
                                         </tr>
-                                        <tr>
+                                        <!-- <tr>
                                             <td align="right"
                                                 >change password:</td
                                             >
@@ -355,8 +348,8 @@
                                                     checked
                                                 /> receive updates
                                             </td>
-                                        </tr>
-                                        <tr>
+                                        </tr> -->
+                                        <!-- <tr>
                                             <td
                                                 colspan="2"
                                                 align="center"
@@ -368,7 +361,7 @@
                                                     >LOGOUT</button
                                                 >
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                     </tbody>
                                 </table>
                             </div>
@@ -378,7 +371,12 @@
             </tbody>
         </table>
 
-        <form on:submit|preventDefault={saveSettings}>
+        <form
+            onsubmit={(e) => {
+                e.preventDefault();
+                saveSettings();
+            }}
+        >
             <table
                 border="1"
                 cellpadding="10"
@@ -425,11 +423,11 @@
         </form>
 
         <div class="sidebar" style="margin-top: 30px;">
-            <img src="Under_Construction_Bar.gif" alt="Under Construction" />
+            <img src="/Under_Construction_Bar.gif" alt="Under Construction" />
             <p style="color: #ff00ff; font-size: 18px;">
                 More settings soon (maybe...)
             </p>
-            <img src="Under_Construction_Bar.gif" alt="Under Construction" />
+            <img src="/Under_Construction_Bar.gif" alt="Under Construction" />
         </div>
 
         <div class="buttons" style="margin-top: 20px;">
@@ -444,28 +442,31 @@
                     <tr>
                         <td
                             ><img
+                                alt="lesbian"
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
-                                src="lesbian.png"
+                                src="/lesbian.png"
                             /></td
                         >
                         <td
                             ><img
+                                alt="hicolor"
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
-                                src="hicolor.gif"
+                                src="/hicolor.gif"
                             /></td
                         >
                         <td
                             ><img
+                                alt="trans rights"
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
-                                src="transnow2.gif"
+                                src="/transnow2.gif"
                             /></td
                         >
                         <td
                             ><img
-                                src="netscape1.gif"
+                                src="/netscape1.gif"
                                 alt="netscape"
                                 width="88"
                                 height="31"
@@ -484,7 +485,6 @@
 </div>
 
 <style>
-    select,
     input[type="checkbox"] {
         background-color: #000;
         color: #00ff00;
@@ -503,7 +503,7 @@
     }
     :global(body) {
         color: white;
-        background: url("wallstars.gif") repeat;
+        background: url("/wallstars.gif") repeat;
         margin: 0;
         padding: 0;
         min-height: 100vh;
@@ -518,7 +518,7 @@
         margin: 0;
         padding: 0;
         height: 100%;
-        background: url("wallstars.gif");
+        background: url("/wallstars.gif");
         background-repeat: repeat;
         background-attachment: fixed;
         background-size: auto;
@@ -533,7 +533,7 @@
         justify-content: center;
         align-items: center;
         gap: 10px;
-        margin-bottom: 15px;
+        margin-bottom: 5px;
     }
 
     .profile-options {
@@ -579,11 +579,7 @@
         margin-bottom: 15px;
     }
 
-    .popular-searches {
-        margin-top: 20px;
-    }
-
-    blink {
+    .blink {
         animation: blinker 1s step-start infinite;
     }
 
@@ -610,10 +606,6 @@
 
     .yellow-text {
         color: #ffff00;
-    }
-
-    .green-text {
-        color: #00ff00;
     }
 
     .small-gray-text {

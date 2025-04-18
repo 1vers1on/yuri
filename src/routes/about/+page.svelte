@@ -1,28 +1,27 @@
 <script lang="ts">
+    import Marquee from "$lib/components/marquee.svelte";
 </script>
-
-<!-- https://gifcity.carrd.co/#blinkies -->
 
 <div class="page-container">
     <center>
         <div class="header-banner">
-            <blink
-                ><span class="star red">★</span><span class="star yellow"
+            <div class="blink">
+                <span class="star red">★</span><span class="star yellow"
                     >★</span
                 ><span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span><span class="star yellow"
                     >★</span
-                ><span class="star red">★</span></blink
-            >
+                ><span class="star red">★</span>
+            </div>
         </div>
 
         <h1>
             <div class="title-thingy">
-                <img src="star.gif" />
-                <marquee scrollamount="10" behavior="alternate"
-                    >ABOUT THIS SITE!!!</marquee
+                <img src="/star.gif" alt="star" />
+                <Marquee scrollamount="10" behavior="alternate"
+                    >ABOUT THIS SITE!!!</Marquee
                 >
-                <img src="star.gif" />
+                <img src="/star.gif" alt="star" />
             </div>
         </h1>
 
@@ -74,11 +73,11 @@
             <tbody>
                 <tr>
                     <td align="center">
-                        <img src="beatingheart.gif" alt="heart" />
+                        <img src="/beatingheart.gif" alt="heart" />
                         <span class="pink-text"
                             >WELCOME TO THE YURI ARCHIVE!</span
                         >
-                        <img src="beatingheart.gif" alt="heart" />
+                        <img src="/beatingheart.gif" alt="heart" />
                     </td>
                 </tr>
                 <tr>
@@ -90,7 +89,7 @@
                 <tr>
                     <td align="center" class="blink-text">
                         email me <a href="mailto:elliehartung@outlook.com"
-                            ><img src="Cat.gif" /></a
+                            ><img src="/Cat.gif" alt="cat :3" /></a
                         >
                     </td>
                 </tr>
@@ -108,35 +107,38 @@
             />
             <br />
             <a href="/guestbook">
-                <img src="bguestbook.gif" alt="guestbook" />
+                <img src="/bguestbook.gif" alt="guestbook" />
             </a>
             <table border="0" cellpadding="3" align="center">
                 <tbody>
                     <tr>
                         <td
                             ><img
+                                alt="lesbian"
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
-                                src="lesbian.png"
+                                src="/lesbian.png"
                             /></td
                         >
                         <td
                             ><img
+                                alt="hicolor"
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
-                                src="hicolor.gif"
+                                src="/hicolor.gif"
                             /></td
                         >
                         <td
                             ><img
+                                alt="trans rights"
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
-                                src="transnow2.gif"
+                                src="/transnow2.gif"
                             /></td
                         >
                         <td
                             ><img
-                                src="netscape1.gif"
+                                src="/netscape1.gif"
                                 alt="netscape"
                                 width="88"
                                 height="31"
@@ -160,7 +162,7 @@
     }
     :global(body) {
         color: white;
-        background: url("wallstars.gif") repeat;
+        background: url("/wallstars.gif") repeat;
         margin: 0;
         padding: 0;
         min-height: 100vh;
@@ -175,7 +177,7 @@
         margin: 0;
         padding: 0;
         height: 100%;
-        background: url("wallstars.gif");
+        background: url("/wallstars.gif");
         background-repeat: repeat;
         background-attachment: fixed;
         background-size: auto;
@@ -214,21 +216,14 @@
         font-size: 16px;
         padding: 10px;
     }
-
-    .blinkies-container {
-        margin: 15px auto;
-        display: flex;
-        justify-content: center;
-        gap: 5px;
-    }
-
+    
     .header-banner {
         font-size: 24px;
         font-weight: bold;
         margin-bottom: 15px;
     }
 
-    blink {
+    .blink {
         animation: blinker 1s step-start infinite;
     }
 

@@ -1,35 +1,40 @@
 <script lang="ts">
     export let results: {
-        id: number;
-        artist: string;
-        tags: string[];
+        id: string;
         filename: string;
+        rating: string;
+        source: string | null;
+        artist: string | null;
+        tags: string[];
     }[];
 
     export let onItemClick: (result: {
-        id: number;
-        artist: string;
-        tags: string[];
+        id: string;
         filename: string;
+        rating: string;
+        source: string | null;
+        artist: string | null;
+        tags: string[];
     }) => void;
 </script>
 
 <div class="results-container">
     {#each results as result}
-        <div class="result-item" on:click={() => onItemClick(result)}>
+        <button 
+            type="button"
+            class="result-item" 
+            on:click={() => onItemClick(result)}
+            on:keydown={(e) => e.key === 'Enter' && onItemClick(result)}
+        >
             <p class="result-title">{result.artist}</p>
             <img
-                src={result.filename}
+                src={"http://localhost:3001/" + result.filename}
                 alt={result.artist}
                 class="result-image"
                 style="image-rendering: auto !important;"
+                loading="lazy"
             />
-            <!-- <div class="tags">
-                {#each result.tags as tag}
-                    <span class="tag">{tag}</span>
-                {/each}
-            </div> -->
-        </div>
+        </button>
     {/each}
 </div>
 
@@ -60,16 +65,5 @@
         width: 100%;
         max-width: 300px;
         margin-top: 10px;
-    }
-
-    .tag {
-        display: inline-block;
-        background-color: #0f0;
-        color: black;
-        padding: 2px 5px;
-        margin: 2px;
-        font-size: 12px;
-        border-radius: 4px;
-        font-family: monospace;
     }
 </style>

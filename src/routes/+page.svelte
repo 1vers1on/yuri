@@ -1,18 +1,23 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
-    export let data;
+    import Grid from "$lib/components/grid.svelte";
+    import { getUserFavorites } from "$lib/api.js";
+    import Marquee from "$lib/components/marquee.svelte";
+    let { data } = $props();
 
-    let searchQuery = "";
-    let suggestions: any = [];
-    let showSuggestions = false;
-    let isLoading = false;
-    let selectedIndex = -1;
+    let searchQuery = $state("");
+    let suggestions: any = $state([]);
+    let showSuggestions = $state(false);
+    let isLoading = $state(false);
+    let selectedIndex = $state(-1);
     let searchTimeout: NodeJS.Timeout | null = null;
-    let searchType = "random";
-    let lastWord = "";
+    let searchType = $state("random");
+    let lastWord = $state("");
     let searchInput: HTMLInputElement;
-    let suggestionContainer: HTMLDivElement;
+    let suggestionContainer = $state<HTMLDivElement | null>(null);
+    let favoritesShown = $state(false);
+    let favorites = $state([]);
 
     const popularSearches = data.popularSearches;
 
@@ -136,17 +141,17 @@
         }
     }
 
-    let stats: {
-        totalYuri: number;
-        totalTags: number;
-        averageTagsPerPost: number;
-        topTags: { tag: string; count: number }[];
-    } = {
+    interface TagStat {
+        tag: string;
+        count: number;
+    }
+
+    let stats = $state({
         totalYuri: 0,
         totalTags: 0,
         averageTagsPerPost: 0,
-        topTags: [],
-    };
+        topTags: [] as TagStat[],
+    });
 
     onMount(async () => {
         try {
@@ -154,6 +159,17 @@
             if (res.ok) {
                 stats = await res.json();
             }
+            
+            setTimeout(async () => {
+                const userFavorites = await getUserFavorites();
+                if (userFavorites) {
+                    favorites = userFavorites;
+                    if (favorites.length > 0) {
+                        favoritesShown = true;
+                    }
+                }
+            }, 1000);
+
         } catch (err) {
             console.error("failed to load stats meow", err);
         }
@@ -163,23 +179,21 @@
 <div class="page-container">
     <center>
         <div class="header-banner">
-            <blink
-                ><span class="star red">★</span><span class="star yellow"
+            <div class="blink"><span class="star red">★</span><span class="star yellow"
                     >★</span
                 ><span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span><span class="star yellow"
                     >★</span
-                ><span class="star red">★</span></blink
+                ><span class="star red">★</span></div
             >
         </div>
 
         <h1>
             <div class="title-thingy">
-                <img src="star.gif" />
-                <marquee scrollamount="10" behavior="alternate"
-                    >YURI ARCHIVE</marquee
-                >
-                <img src="star.gif" />
+                <img src="/star.gif" alt="star" />
+                <Marquee scrollamount="10" behavior="alternate"
+                    >YURI ARCHIVE</Marquee>
+                <img src="/star.gif" alt="star" />
             </div>
         </h1>
         <table
@@ -229,17 +243,17 @@
             <tbody>
                 <tr>
                     <td>
-                        <form on:submit|preventDefault={handleSearch}>
+                        <form onsubmit={e => { e.preventDefault(); handleSearch(); }}>
                             <div class="autocomplete-wrapper">
                                 <input
                                     type="text"
                                     name="q"
                                     bind:value={searchQuery}
                                     bind:this={searchInput}
-                                    on:input={handleInput}
-                                    on:keydown={handleKeyDown}
-                                    on:blur={handleBlur}
-                                    on:focus={handleFocus}
+                                    oninput={handleInput}
+                                    onkeydown={handleKeyDown}
+                                    onblur={handleBlur}
+                                    onfocus={handleFocus}
                                     style="width: 200px; background-color: #000; color: #0f0; border: 2px inset #0f0;"
                                     autocomplete="off"
                                     placeholder="Search tags..."
@@ -258,15 +272,18 @@
                                     >
                                         {#each suggestions as suggestion, i}
                                             <div
+                                                role="option"
+                                                aria-selected={i === selectedIndex}
+                                                tabindex="0"
                                                 class="suggestion-item {i ===
                                                 selectedIndex
                                                     ? 'selected'
                                                     : ''}"
-                                                on:mousedown={() =>
+                                                onmousedown={() =>
                                                     selectSuggestion(
                                                         suggestion.tag,
                                                     )}
-                                                on:mouseenter={() =>
+                                                onmouseenter={() =>
                                                     (selectedIndex = i)}
                                             >
                                                 <span>{suggestion.tag}</span>
@@ -355,30 +372,37 @@
                     </tr>
                     <tr>
                         <td>
-                            <marquee
+                            <Marquee
                                 direction="up"
                                 scrollamount="2"
-                                height="60"
+                                height="60px"
                             >
                                 <div class="green-text">
                                     {#each popularSearches as search}
                                         {search}<br />
                                     {/each}
                                 </div>
-                            </marquee>
+                            </Marquee>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-        <div class="sidebar" style="margin-top: 30px;">
-            <img src="Under_Construction_Bar.gif" alt="Under Construction" />
-            <p style="color: #00ffff; font-size: 20px;">
-                This site is currently <b>under construction!!!</b> check back later
-            </p>
-            <img src="Under_Construction_Bar.gif" alt="Under Construction" />
-        </div>
+        {#if favoritesShown}
+            <div
+                style="margin-top: 20px; width: 80%; margin-left: auto; margin-right: auto;"
+            >
+                <div class="yellow-text" style="margin-bottom: 10px;">
+                    <h3>FAVORITES</h3>
+                    </div>
+                <Grid
+                    results={favorites}
+                    onItemClick={(item) =>
+                        goto(`/post/${item.id}`)
+                    }
+                />
+            </div>
+        {/if}
 
         <div
             class="search-tips"
@@ -421,7 +445,7 @@
 
         <div class="buttons" style="margin-top: 20px;">
             <a href="/guestbook">
-                <img src="bguestbook.gif" alt="guestbook" />
+                <img src="/bguestbook.gif" alt="guestbook" />
             </a>
             <br />
             <div>
@@ -435,28 +459,31 @@
                     <tr>
                         <td
                             ><img
+                                alt="lesbian"
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
-                                src="lesbian.png"
+                                src="/lesbian.png"
                             /></td
                         >
                         <td
                             ><img
+                                alt="hicolor"
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
-                                src="hicolor.gif"
+                                src="/hicolor.gif"
                             /></td
                         >
                         <td
                             ><img
+                                alt="trans rights"
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
-                                src="transnow2.gif"
+                                src="/transnow2.gif"
                             /></td
                         >
                         <td
                             ><img
-                                src="netscape1.gif"
+                                src="/netscape1.gif"
                                 alt="netscape"
                                 width="88"
                                 height="31"
@@ -492,7 +519,7 @@
         margin: 0;
         padding: 0;
         height: 100%;
-        background: url("wallstars.gif");
+        background: url("/wallstars.gif");
         background-repeat: repeat;
         background-attachment: fixed;
         background-size: auto;
@@ -540,7 +567,7 @@
         margin-top: 20px;
     }
 
-    blink {
+    .blink {
         animation: blinker 1s step-start infinite;
     }
 
