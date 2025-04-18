@@ -1,3 +1,19 @@
+<!-- Yuri Archive
+Copyright (C) 2025 1vers1on
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
+
 <script lang="ts">
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
@@ -176,11 +192,30 @@
         }, 500);
     }
 
+    async function fetchResults(): Promise<void> {
+        searching = true;
+        updateURL(query, page, limit, order);
+        
+        try {
+            results = await getPosts(query, page, limit, order);
+        } catch (error) {
+            console.error("Error fetching results:", error);
+        } finally {
+            searching = false;
+        }
+    }
+
     function prevPage(): void {
-        if (page > 1) page--;
+        if (page > 1) {
+            page--;
+            fetchResults();
+        }
     }
     function nextPage(): void {
-        if (page < totalPages) page++;
+        if (page < totalPages) {
+            page++;
+            fetchResults();
+        }
     }
 
     function show(result: PostResult): void {
@@ -308,7 +343,7 @@
             <button onclick={nextPage} disabled={page >= totalPages}
                 >next</button
             >
-            <span
+            <!-- <span
                 >| limit:
                 <input
                     type="number"
@@ -316,7 +351,7 @@
                     bind:value={limit}
                     style="width: 50px;"
                 />
-            </span>
+            </span> -->
         </div>
 
         <div class="buttons" style="margin-top: 20px;">
@@ -371,7 +406,7 @@
         </div>
 
         <footer class="footer">
-            <p>© 1vers1on. all rights reserved.</p>
+            <p>© 1vers1on.</p>
             <p class="small-gray-text">powered by trans catgirl whimpering</p>
         </footer>
     </center>

@@ -1,3 +1,19 @@
+<!-- Yuri Archive
+Copyright (C) 2025 1vers1on
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
+
 <script lang="ts">
 </script>
 
@@ -85,6 +101,13 @@
                     </td>
                 </tr>
                 <tr>
+                    <td align="center" class="about-text">
+                        <a href="https://github.com/1vers1on/yuri"
+                            >Source Code</a
+                        >
+                    </td>
+                </tr>
+                <tr>
                     <td align="center" class="blink-text">
                         email me <a href="mailto:elliehartung@outlook.com"
                             ><img src="/Cat.gif" alt="cat :3" /></a
@@ -152,7 +175,7 @@
         </div>
 
         <footer class="footer">
-            <p>© 1vers1on. all rights reserved.</p>
+            <p>© 1vers1on.</p>
             <p class="small-gray-text">powered by trans catgirl whimpering</p>
         </footer>
     </center>

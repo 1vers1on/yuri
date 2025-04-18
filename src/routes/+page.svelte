@@ -1,3 +1,19 @@
+<!-- Yuri Archive
+Copyright (C) 2025 1vers1on
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
+
 <script lang="ts">
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
@@ -66,7 +82,7 @@
         if (lastWord.length >= 1) {
             searchTimeout = setTimeout(() => {
                 fetchSuggestions();
-            }, 200); // Reduced delay for more responsiveness
+            }, 200);
         } else {
             suggestions = [];
             showSuggestions = false;
@@ -75,10 +91,10 @@
 
     function selectSuggestion(tag: string) {
         const words = searchQuery.split(" ");
-        words[words.length - 1] = tag + " "; // Add space after selection
+        words[words.length - 1] = tag + " ";
         searchQuery = words.join(" ");
         showSuggestions = false;
-        searchInput.focus(); // Keep focus on input after selection
+        searchInput.focus();
     }
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -518,7 +534,7 @@
         </div>
 
         <footer class="footer">
-            <p>© 1vers1on. all rights reserved.</p>
+            <p>© 1vers1on.</p>
             <p class="small-gray-text">powered by trans catgirl whimpering</p>
         </footer>
     </center>
