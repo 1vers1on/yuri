@@ -28,7 +28,7 @@
         >
             <p class="result-title-grid">{result.artist}</p>
             <img
-                src={"http://localhost:3001/" + result.filename}
+                src={"https://cdn.liminal.moe/" + result.filename}
                 alt={result.artist}
                 class="result-image-grid"
                 style="image-rendering: auto !important;"

@@ -83,10 +83,10 @@
     function getFullImageUrl(filename: string) {
         return browser
             ? new URL(
-                  `http://localhost:3001/${filename}`,
+                  `https://cdn.liminal.moe/${filename}`,
                   window.location.origin,
               ).toString()
-            : `http://localhost:3001/${filename}`;
+            : `https://cdn.liminal.moe/${filename}`;
     }
 </script>
 
