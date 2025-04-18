@@ -1,4 +1,4 @@
-import { json, error } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
 import sharp from "sharp";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -7,7 +7,9 @@ export async function GET({ params }) {
     const id = params.slug;
 
     if (!id) {
-        throw error(400, "missing id parameter");
+        return new Response("missing id parameter", {
+            status: 400,
+        });
     }
 
     const avifPath = path.resolve(
@@ -25,6 +27,8 @@ export async function GET({ params }) {
         });
     } catch (err: any) {
         console.error("conversion failed:", err);
-        throw error(500, "image conversion failed");
+        return new Response("image conversion failed", {
+            status: 500,
+        });
     }
 }

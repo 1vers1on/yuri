@@ -33,26 +33,32 @@ function createSettingsStore() {
         },
         get() {
             let result: UserSettings = defaultSettings;
-            subscribe(settings => {
+            subscribe((settings) => {
                 result = settings;
             })();
             return result;
         },
         update(updaterFn: (settings: UserSettings) => UserSettings) {
-            update(settings => {
+            update((settings) => {
                 const updatedSettings = updaterFn(settings);
                 if (browser) {
-                    localStorage.setItem("userSettings", JSON.stringify(updatedSettings));
+                    localStorage.setItem(
+                        "userSettings",
+                        JSON.stringify(updatedSettings),
+                    );
                 }
                 return updatedSettings;
             });
         },
         reset() {
             if (browser) {
-                localStorage.setItem("userSettings", JSON.stringify(defaultSettings));
+                localStorage.setItem(
+                    "userSettings",
+                    JSON.stringify(defaultSettings),
+                );
             }
             set(defaultSettings);
-        }
+        },
     };
 }
 
@@ -66,33 +72,41 @@ function createFavoritesStore() {
     return {
         subscribe,
         add(id: string) {
-            update(favorites => {
+            update((favorites) => {
                 const updatedFavorites = [...favorites, id];
                 if (browser) {
-                    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+                    localStorage.setItem(
+                        "favorites",
+                        JSON.stringify(updatedFavorites),
+                    );
                 }
                 return updatedFavorites;
             });
         },
         remove(id: string) {
-            update(favorites => {
-                const updatedFavorites = favorites.filter(favId => favId !== id);
+            update((favorites) => {
+                const updatedFavorites = favorites.filter(
+                    (favId) => favId !== id,
+                );
                 if (browser) {
-                    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+                    localStorage.setItem(
+                        "favorites",
+                        JSON.stringify(updatedFavorites),
+                    );
                 }
                 return updatedFavorites;
             });
         },
         get() {
             let result: string[] = [];
-            subscribe(favorites => {
+            subscribe((favorites) => {
                 result = favorites;
             })();
             return result;
         },
         has(id: string) {
             let result = false;
-            subscribe(favorites => {
+            subscribe((favorites) => {
                 result = favorites.includes(id);
             })();
             return result;
@@ -102,7 +116,7 @@ function createFavoritesStore() {
                 localStorage.removeItem("favorites");
             }
             set([]);
-        }
+        },
     };
 }
 

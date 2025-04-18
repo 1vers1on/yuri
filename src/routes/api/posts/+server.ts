@@ -1,7 +1,6 @@
 import { json } from "@sveltejs/kit";
 import { getPosts, parseTags } from "$lib/server/serverApi";
 
-
 export async function GET({ url }) {
     const { include, exclude } = parseTags(url.searchParams.get("tags"));
     const nsfw = url.searchParams.get("nsfw") === "true";
@@ -17,7 +16,7 @@ export async function GET({ url }) {
         nsfw,
         page,
         limit,
-        order
+        order,
     });
 
     return json({

@@ -20,11 +20,11 @@
 
 <div class="results-container">
     {#each results as result}
-        <button 
+        <button
             type="button"
-            class="result-item" 
+            class="result-item"
             on:click={() => onItemClick(result)}
-            on:keydown={(e) => e.key === 'Enter' && onItemClick(result)}
+            on:keydown={(e) => e.key === "Enter" && onItemClick(result)}
         >
             <p class="result-title">{result.artist}</p>
             <img

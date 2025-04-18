@@ -1,8 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { userSettings } from "$lib/globalState";
-    import { registerUser, accessTokenStore } from "$lib/auth";
-    import Marquee from "$lib/components/marquee.svelte";
+    import { registerUser, accessTokenStore, loginUser } from "$lib/auth";
 
     let settings = {
         theme: "dark",
@@ -42,19 +41,26 @@
             }
         });
 
-
         const data = await response.json();
         captchaHtml = data.data;
         captchaToken = data.token;
     });
 
-    function login() {
+    async function login() {
         if (username && password) {
-            loggedIn = true;
-            displayName = username;
-            alert("Login successful! Welcome back, " + displayName + "!");
+            try {
+                await loginUser(username, password);
+                loggedIn = true;
+                displayName = username;
+            } catch (error) {
+                if (error instanceof Error) {
+                    alert("Login failed: " + error.message);
+                } else {
+                    alert("Login failed: " + error);
+                }
+            }
         } else {
-            alert("Please enter both username and password.");
+            alert("Please fill in all fields.");
         }
     }
 
@@ -106,7 +112,7 @@
 
 <div class="page-container">
     <center>
-        <div class="header-banner">
+        <header class="header-banner">
             <div class="blink">
                 <span class="star red">★</span>
                 <span class="star yellow">★</span>
@@ -115,11 +121,11 @@
                 <span class="star yellow">★</span>
                 <span class="star red">★</span>
             </div>
-        </div>
+        </header>
 
         <h1 class="title-thingy">
             <img src="/star.gif" alt="star" />
-            <Marquee scrollamount="10" behavior="alternate">SETTINGS</Marquee>
+            <marquee scrollamount="10" behavior="alternate">SETTINGS</marquee>
             <img src="/star.gif" alt="star" />
         </h1>
 
@@ -145,7 +151,7 @@
                 </tr>
                 <tr>
                     <td align="center">
-                        <div class="nav-links">
+                        <nav class="nav-links">
                             <a href="/" class="nav-link">[HOME]</a>
                             <span class="nav-divider">★</span>
                             <a href="/random" class="nav-link">[RANDOM]</a>
@@ -155,7 +161,7 @@
                             <a href="/about" class="nav-link">[ABOUT]</a>
                             <span class="nav-divider">★</span>
                             <a href="/settings" class="nav-link">[SETTINGS]</a>
-                        </div>
+                        </nav>
                     </td>
                 </tr>
             </tbody>
@@ -182,7 +188,12 @@
                     {#if !showRegisterForm}
                         <tr>
                             <td colspan="2">
-                                <form onsubmit={(e) => { e.preventDefault(); login(); }}>
+                                <form
+                                    onsubmit={(e) => {
+                                        e.preventDefault();
+                                        login();
+                                    }}
+                                >
                                     <table width="100%">
                                         <tbody>
                                             <tr>
@@ -233,7 +244,12 @@
                     {:else}
                         <tr>
                             <td colspan="2">
-                                <form onsubmit={(e) => { e.preventDefault(); register(); }}>
+                                <form
+                                    onsubmit={(e) => {
+                                        e.preventDefault();
+                                        register();
+                                    }}
+                                >
                                     <table width="100%">
                                         <tbody>
                                             <tr>
@@ -446,6 +462,7 @@
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
                                 src="/lesbian.png"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -454,6 +471,7 @@
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
                                 src="/hicolor.gif"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -462,6 +480,7 @@
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
                                 src="/transnow2.gif"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -470,6 +489,7 @@
                                 alt="netscape"
                                 width="88"
                                 height="31"
+                                loading="lazy"
                             /></td
                         >
                     </tr>
@@ -477,10 +497,10 @@
             </table>
         </div>
 
-        <div class="footer">
+        <footer class="footer">
             <p>© 1vers1on. all rights reserved.</p>
             <p class="small-gray-text">powered by trans catgirl whimpering</p>
-        </div>
+        </footer>
     </center>
 </div>
 

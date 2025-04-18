@@ -1,12 +1,12 @@
 import { json, error } from "@sveltejs/kit";
-import type { RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from "@sveltejs/kit";
 import { register } from "$lib/server/auth";
 import { isValid } from "$lib/server/captcha.js";
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
     try {
         const { username, password, captchaToken } = await request.json();
-        
+
         if (!username || !password || !captchaToken) {
             throw error(400, "Missing required fields");
         }
@@ -65,7 +65,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
             console.error(err);
             throw error(500, "Internal Server Error: " + err.message);
         }
-        
+
         console.error(err);
         throw error(500, "Internal Server Error");
     }

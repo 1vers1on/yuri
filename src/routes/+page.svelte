@@ -3,7 +3,7 @@
     import { goto } from "$app/navigation";
     import Grid from "$lib/components/grid.svelte";
     import { getUserFavorites } from "$lib/api.js";
-    import Marquee from "$lib/components/marquee.svelte";
+    
     let { data } = $props();
 
     let searchQuery = $state("");
@@ -159,7 +159,7 @@
             if (res.ok) {
                 stats = await res.json();
             }
-            
+
             setTimeout(async () => {
                 const userFavorites = await getUserFavorites();
                 if (userFavorites) {
@@ -169,7 +169,6 @@
                     }
                 }
             }, 1000);
-
         } catch (err) {
             console.error("failed to load stats meow", err);
         }
@@ -178,24 +177,26 @@
 
 <div class="page-container">
     <center>
-        <div class="header-banner">
-            <div class="blink"><span class="star red">★</span><span class="star yellow"
-                    >★</span
+        <header class="header-banner">
+            <div class="blink">
+                <span class="star red">★</span><span class="star yellow">★</span
                 ><span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span><span class="star yellow"
                     >★</span
-                ><span class="star red">★</span></div
-            >
-        </div>
+                ><span class="star red">★</span>
+            </div>
+        </header>
 
         <h1>
             <div class="title-thingy">
                 <img src="/star.gif" alt="star" />
-                <Marquee scrollamount="10" behavior="alternate"
-                    >YURI ARCHIVE</Marquee>
+                <marquee scrollamount="10" behavior="alternate"
+                    >YURI ARCHIVE</marquee
+                >
                 <img src="/star.gif" alt="star" />
             </div>
         </h1>
+
         <table
             border="1"
             cellpadding="5"
@@ -218,7 +219,7 @@
                 </tr>
                 <tr>
                     <td align="center">
-                        <div class="nav-links">
+                        <nav class="nav-links">
                             <a href="/" class="nav-link">[HOME]</a>
                             <span class="nav-divider">★</span>
                             <a href="/random" class="nav-link">[RANDOM]</a>
@@ -228,7 +229,7 @@
                             <a href="/about" class="nav-link">[ABOUT]</a>
                             <span class="nav-divider">★</span>
                             <a href="/settings" class="nav-link">[SETTINGS]</a>
-                        </div>
+                        </nav>
                     </td>
                 </tr>
             </tbody>
@@ -243,9 +244,19 @@
             <tbody>
                 <tr>
                     <td>
-                        <form onsubmit={e => { e.preventDefault(); handleSearch(); }}>
+                        <form
+                            onsubmit={(e) => {
+                                e.preventDefault();
+                                handleSearch();
+                            }}
+                        >
                             <div class="autocomplete-wrapper">
+                                <label
+                                    for="search-input"
+                                    class="visually-hidden">Search tags</label
+                                >
                                 <input
+                                    id="search-input"
                                     type="text"
                                     name="q"
                                     bind:value={searchQuery}
@@ -267,13 +278,16 @@
                                 {/if}
                                 {#if showSuggestions}
                                     <div
+                                        id="suggestion-list"
                                         class="suggestion-list"
                                         bind:this={suggestionContainer}
+                                        role="listbox"
                                     >
                                         {#each suggestions as suggestion, i}
                                             <div
                                                 role="option"
-                                                aria-selected={i === selectedIndex}
+                                                aria-selected={i ===
+                                                    selectedIndex}
                                                 tabindex="0"
                                                 class="suggestion-item {i ===
                                                 selectedIndex
@@ -295,7 +309,11 @@
                                     </div>
                                 {/if}
                             </div>
+                            <label for="search-submit" class="visually-hidden"
+                                >Submit search</label
+                            >
                             <input
+                                id="search-submit"
                                 type="submit"
                                 value="SEARCH"
                                 style="background-color: #000; color: #f0f; font-weight: bold; border: 2px outset #f0f;"
@@ -319,39 +337,25 @@
                     >
                 </tr>
                 <tr>
-                    <td align="center"
-                        ><input
+                    <td align="center">
+                        <label for="search_type">random</label>
+                        <input
                             type="radio"
                             name="search_type"
                             value="random"
                             bind:group={searchType}
                             checked
-                        /> random</td
-                    >
-                    <td align="center"
-                        ><input
+                        />
+                    </td>
+                    <td align="center">
+                        <label for="search_type">ordered</label>
+                        <input
                             type="radio"
                             name="search_type"
                             value="ordered"
                             bind:group={searchType}
-                        /> ordered</td
-                    >
-                    <!-- <td align="center"
-                        ><input
-                            type="radio"
-                            name="search_type"
-                            value="nothing"
-                            bind:group={searchType}
-                        /> nothing</td
-                    >
-                    <td align="center"
-                        ><input
-                            type="radio"
-                            name="search_type"
-                            value="more nothing"
-                            bind:group={searchType}
-                        /> more nothing</td
-                    > -->
+                        />
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -372,7 +376,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <Marquee
+                            <marquee
                                 direction="up"
                                 scrollamount="2"
                                 height="60px"
@@ -382,7 +386,7 @@
                                         {search}<br />
                                     {/each}
                                 </div>
-                            </Marquee>
+                            </marquee>
                         </td>
                     </tr>
                 </tbody>
@@ -393,13 +397,11 @@
                 style="margin-top: 20px; width: 80%; margin-left: auto; margin-right: auto;"
             >
                 <div class="yellow-text" style="margin-bottom: 10px;">
-                    <h3>FAVORITES</h3>
-                    </div>
+                    <h2>FAVORITES</h2>
+                </div>
                 <Grid
                     results={favorites}
-                    onItemClick={(item) =>
-                        goto(`/post/${item.id}`)
-                    }
+                    onItemClick={(item) => goto(`/post/${item.id}`)}
                 />
             </div>
         {/if}
@@ -408,7 +410,7 @@
             class="search-tips"
             style="margin-top: 20px; border: 2px dashed #ff00ff; padding: 10px; width: 80%; margin-left: auto; margin-right: auto;"
         >
-            <h3 class="cyan-text">SEARCH TIPS</h3>
+            <h2 class="cyan-text">SEARCH TIPS</h2>
             <ul
                 style="text-align: left; color: #ffffff; list-style-type: square;"
             >
@@ -420,7 +422,7 @@
         <div
             style="margin-top: 20px; padding: 10px; border: 2px dotted #00ffff; width: 80%; margin-left: auto; margin-right: auto; background-color: rgba(0, 0, 0, 0.7);"
         >
-            <h3 class="yellow-text">SITE STATS</h3>
+            <h2 class="yellow-text">SITE STATS</h2>
             <p>
                 Total Yuri Posts: <span class="green-text"
                     >{stats.totalYuri}</span
@@ -433,7 +435,7 @@
                 >
             </p>
 
-            <h4 class="cyan-text" style="margin-top: 10px;">Top 10 Tags:</h4>
+            <h3 class="cyan-text" style="margin-top: 10px;">Top 10 Tags:</h3>
             <ul style="text-align: left; color: #ffffff;">
                 {#each stats.topTags as tag}
                     <li>
@@ -463,6 +465,7 @@
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
                                 src="/lesbian.png"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -471,6 +474,7 @@
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
                                 src="/hicolor.gif"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -479,6 +483,7 @@
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
                                 src="/transnow2.gif"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -487,6 +492,7 @@
                                 alt="netscape"
                                 width="88"
                                 height="31"
+                                loading="lazy"
                             /></td
                         >
                     </tr>
@@ -494,10 +500,10 @@
             </table>
         </div>
 
-        <div class="footer">
+        <footer class="footer">
             <p>© 1vers1on. all rights reserved.</p>
             <p class="small-gray-text">powered by trans catgirl whimpering</p>
-        </div>
+        </footer>
     </center>
 </div>
 
@@ -698,5 +704,25 @@
     .blink-text {
         animation: blinker 0.8s step-start infinite;
         color: #ff00ff;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    h3 {
+        font-size: 1.17em;
+    }
+
+    .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
     }
 </style>

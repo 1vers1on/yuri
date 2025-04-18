@@ -24,7 +24,7 @@
             type="button"
             class="result-item-grid"
             on:click={() => onItemClick(result)}
-            on:keydown={(e) => e.key === 'Enter' && onItemClick(result)}
+            on:keydown={(e) => e.key === "Enter" && onItemClick(result)}
         >
             <p class="result-title-grid">{result.artist}</p>
             <img

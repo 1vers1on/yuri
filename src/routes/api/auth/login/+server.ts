@@ -7,7 +7,7 @@ export async function POST({ request, cookies }) {
         if (!username || !password) {
             return error(400, "Missing required fields");
         }
-        
+
         try {
             const { refreshToken } = await login(username, password);
             cookies.set("refreshToken", refreshToken, {

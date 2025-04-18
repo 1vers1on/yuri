@@ -16,11 +16,11 @@ export const load: PageServerLoad = async ({ url }) => {
         nsfw,
         page,
         limit,
-        order
+        order,
     });
 
     return {
         posts,
-        nResults: totalCount
+        nResults: totalCount,
     };
 };

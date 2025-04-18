@@ -45,8 +45,9 @@ export async function getPosts(options: {
     page: number;
     limit: number;
     order: string;
-}): Promise<{ posts: PostResult[], totalCount: number }> {
-    const { includeTagsFilter, excludeTagsFilter, nsfw, page, limit, order } = options;
+}): Promise<{ posts: PostResult[]; totalCount: number }> {
+    const { includeTagsFilter, excludeTagsFilter, nsfw, page, limit, order } =
+        options;
 
     const whereClause = {
         AND: [
@@ -155,7 +156,7 @@ export async function getPosts(options: {
 
     return {
         posts: formattedResult,
-        totalCount: totalPosts
+        totalCount: totalPosts,
     };
 }
 
@@ -203,23 +204,22 @@ export async function getUserFavorites(userId: number) {
                 },
             },
             orderBy: {
-                createdAt: 'desc',
+                createdAt: "desc",
             },
         });
 
-        return favorites.map(favorite => ({
+        return favorites.map((favorite) => ({
             id: favorite.yuri.id,
             filename: favorite.yuri.filename,
             rating: favorite.yuri.rating,
             source: favorite.yuri.source,
             artist: favorite.yuri.artist,
             favoriteDate: favorite.createdAt,
-            tags: favorite.yuri.tags.map(t => t.tag.tag),
+            tags: favorite.yuri.tags.map((t) => t.tag.tag),
         }));
-
     } catch (error) {
-        console.error('Error fetching user favorites:', error);
-        throw new Error('Failed to fetch user favorites');
+        console.error("Error fetching user favorites:", error);
+        throw new Error("Failed to fetch user favorites");
     }
 }
 
@@ -236,8 +236,8 @@ export async function isUserFavorite(userId: number, yuriId: string) {
 
         return !!favorite;
     } catch (error) {
-        console.error('Error checking if post is favorited:', error);
-        throw new Error('Failed to check favorite status');
+        console.error("Error checking if post is favorited:", error);
+        throw new Error("Failed to check favorite status");
     }
 }
 
@@ -252,8 +252,8 @@ export async function addUserFavorite(userId: number, yuriId: string) {
 
         return favorite;
     } catch (error) {
-        console.error('Error adding user favorite:', error);
-        throw new Error('Failed to add user favorite');
+        console.error("Error adding user favorite:", error);
+        throw new Error("Failed to add user favorite");
     }
 }
 
@@ -270,7 +270,7 @@ export async function removeUserFavorite(userId: number, yuriId: string) {
 
         return favorite;
     } catch (error) {
-        console.error('Error removing user favorite:', error);
-        throw new Error('Failed to remove user favorite');
+        console.error("Error removing user favorite:", error);
+        throw new Error("Failed to remove user favorite");
     }
 }

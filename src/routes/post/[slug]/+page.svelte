@@ -2,9 +2,14 @@
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
     import { goto } from "$app/navigation";
-    import { getPost, addUserFavorite, removeUserFavorite, isPostFavorite } from "$lib/api";
+    import {
+        getPost,
+        addUserFavorite,
+        removeUserFavorite,
+        isPostFavorite,
+    } from "$lib/api";
     import { favorites } from "$lib/globalState";
-    import Marquee from "$lib/components/marquee.svelte";
+    
 
     const { data } = $props();
 
@@ -77,7 +82,12 @@
     });
 
     function getFullImageUrl(filename: string) {
-        return browser ? new URL(`http://localhost:3001/${filename}`, window.location.origin).toString() : `http://localhost:3001/${filename}`;
+        return browser
+            ? new URL(
+                  `http://localhost:3001/${filename}`,
+                  window.location.origin,
+              ).toString()
+            : `http://localhost:3001/${filename}`;
     }
 </script>
 
@@ -100,22 +110,21 @@
 
 <div class="page-container">
     <center>
-        <div class="header-banner">
+        <header class="header-banner">
             <div class="blink">
-                <span class="star red">★</span><span class="star yellow"
-                    >★</span
+                <span class="star red">★</span><span class="star yellow">★</span
                 ><span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span><span class="star yellow"
                     >★</span
-                ><span class="star red">★</span></div
-            >
-        </div>
+                ><span class="star red">★</span>
+            </div>
+        </header>
 
         <h1>
             <div class="title-thingy">
                 <img src="/star.gif" alt="star" />
-                <Marquee scrollamount="10" behavior="alternate"
-                    >YURI ARCHIVE</Marquee
+                <marquee scrollamount="10" behavior="alternate"
+                    >YURI ARCHIVE</marquee
                 >
                 <img src="/star.gif" alt="star" />
             </div>
@@ -143,7 +152,7 @@
                 </tr>
                 <tr>
                     <td align="center">
-                        <div class="nav-links">
+                        <nav class="nav-links">
                             <a href="/" class="nav-link">[HOME]</a>
                             <span class="nav-divider">★</span>
                             <a href="/random" class="nav-link">[RANDOM]</a>
@@ -153,7 +162,7 @@
                             <a href="/about" class="nav-link">[ABOUT]</a>
                             <span class="nav-divider">★</span>
                             <a href="/settings" class="nav-link">[SETTINGS]</a>
-                        </div>
+                        </nav>
                     </td>
                 </tr>
             </tbody>
@@ -161,7 +170,9 @@
 
         {#if isLoading}
             <div class="loading-container">
-                <div class="blink"><p class="cyan-text">LOADING POST...</p></div>
+                <div class="blink">
+                    <p class="cyan-text">LOADING POST...</p>
+                </div>
             </div>
         {:else if notFound}
             <div class="not-found-container">
@@ -238,6 +249,7 @@
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
                                 src="/lesbian.png"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -246,6 +258,7 @@
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
                                 src="/hicolor.gif"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -254,6 +267,7 @@
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
                                 src="/transnow2.gif"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -262,6 +276,7 @@
                                 alt="netscape"
                                 width="88"
                                 height="31"
+                                loading="lazy"
                             /></td
                         >
                     </tr>
@@ -269,10 +284,10 @@
             </table>
         </div>
 
-        <div class="footer">
+        <footer class="footer">
             <p>© 1vers1on. all rights reserved.</p>
             <p class="small-gray-text">powered by trans catgirl whimpering</p>
-        </div>
+        </footer>
     </center>
 </div>
 
@@ -425,7 +440,7 @@
         max-width: 700px;
         background-color: rgba(0, 0, 50, 0.5);
     }
-    
+
     .post-image-container {
         margin: 15px auto;
         padding: 5px;

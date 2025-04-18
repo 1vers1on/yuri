@@ -109,9 +109,4 @@ async function login(username: string, password: string) {
     };
 }
 
-export {
-    register,
-    login,
-    refresh,
-    createRefreshToken,
-};
+export { register, login, refresh, createRefreshToken };

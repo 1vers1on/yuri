@@ -1,18 +1,18 @@
 import { json } from "@sveltejs/kit";
 import { PrismaClient } from "@prisma/client";
+import Redis from "ioredis";
 
 const prisma = new PrismaClient();
-
-let statsCache: any = null;
-let lastCacheTime = 0;
-const CACHE_TTL = 3600000;
+const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+const CACHE_KEY = "yuri:stats";
+const CACHE_TTL = 3600;
 
 export async function GET() {
     try {
-        const now = Date.now();
+        const cachedStats = await redis.get(CACHE_KEY);
 
-        if (statsCache && now - lastCacheTime < CACHE_TTL) {
-            return json(statsCache);
+        if (cachedStats) {
+            return json(JSON.parse(cachedStats));
         }
 
         const totalYuri = await prisma.yuri.count();
@@ -47,8 +47,12 @@ export async function GET() {
             })),
         };
 
-        statsCache = responseData;
-        lastCacheTime = now;
+        await redis.set(
+            CACHE_KEY,
+            JSON.stringify(responseData),
+            "EX",
+            CACHE_TTL,
+        );
 
         return json(responseData);
     } catch (err) {

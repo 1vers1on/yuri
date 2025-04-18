@@ -136,7 +136,10 @@ export async function addUserFavorite(postId: string) {
 
 export async function removeUserFavorite(postId: string) {
     if (await loggedIn()) {
-        const url = new URL(`/api/user/me/favorites/${postId}`, window.location.origin);
+        const url = new URL(
+            `/api/user/me/favorites/${postId}`,
+            window.location.origin,
+        );
         const token = await getAccessToken();
         const response = await fetch(url.toString(), {
             method: "DELETE",
@@ -160,7 +163,10 @@ export async function removeUserFavorite(postId: string) {
 export async function isPostFavorite(postId: string) {
     if (await loggedIn()) {
         try {
-            const url = new URL(`/api/user/me/favorites/${postId}`, window.location.origin);
+            const url = new URL(
+                `/api/user/me/favorites/${postId}`,
+                window.location.origin,
+            );
             const token = await getAccessToken();
             const response = await fetch(url.toString(), {
                 method: "GET",
@@ -170,12 +176,14 @@ export async function isPostFavorite(postId: string) {
                 },
             });
             if (!response.ok) {
-                throw new Error(`Error checking favorite status: ${response.statusText}`);
+                throw new Error(
+                    `Error checking favorite status: ${response.statusText}`,
+                );
             }
             const data = await response.json();
             return data.isFavorite;
         } catch (error) {
-            console.error('Error checking favorite status:', error);
+            console.error("Error checking favorite status:", error);
             return false;
         }
     } else {

@@ -13,17 +13,17 @@ export async function POST({ cookies }) {
     } catch (err) {
         if (err instanceof Error) {
             if (err.message === "Invalid refresh token") {
-                cookies.delete("refreshToken", { path: '/' });
+                cookies.delete("refreshToken", { path: "/" });
                 throw error(401, "Unauthorized");
             }
 
             if (err.message === "Refresh token expired") {
-                cookies.delete("refreshToken", { path: '/' });
+                cookies.delete("refreshToken", { path: "/" });
                 throw error(401, "Unauthorized");
             }
 
             if (err.message === "User not found") {
-                cookies.delete("refreshToken", { path: '/' });
+                cookies.delete("refreshToken", { path: "/" });
                 throw error(401, "Unauthorized");
             }
         }

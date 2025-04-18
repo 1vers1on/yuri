@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { writable } from "svelte/store";
-    import Marquee from "$lib/components/marquee.svelte";
+    
 
     type Entry = {
         id: number;
@@ -62,14 +62,14 @@
                 return;
             }
 
-            const result = await fetch(
-                "/api/captcha",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ token: captchaToken, text: captchaText }),
-                },
-            );
+            const result = await fetch("/api/captcha", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    token: captchaToken,
+                    text: captchaText,
+                }),
+            });
 
             if (!result.ok) {
                 const error = await result.json();
@@ -83,7 +83,7 @@
             // await fetch("/api/captcha", {
             //     method: "POST",
             //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify({ token: captchaToken, 
+            //     body: JSON.stringify({ token: captchaToken,
             // });
 
             // await fetch(
@@ -128,13 +128,10 @@
     }
 
     onMount(async () => {
-        const response = await fetch(
-            "/api/captcha",
-            {
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-            },
-        );
+        const response = await fetch("/api/captcha", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
 
         if (!response.ok) {
             throw new Error("Failed to fetch captcha");
@@ -149,22 +146,22 @@
 
 <div class="page-container">
     <center>
-        <div class="header-banner">
+        <header class="header-banner">
             <div class="blink">
-                ><span class="star red">★</span><span class="star yellow"
+                <span class="star red">★</span><span class="star yellow"
                     >★</span
                 ><span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span><span class="star yellow"
                     >★</span
-                ><span class="star red">★</span></div
-            >
-        </div>
+                ><span class="star red">★</span>
+            </div>
+        </header>
 
         <h1>
             <div class="title-thingy">
                 <img src="/star.gif" alt="star" />
-                <Marquee scrollamount="10" behavior="alternate"
-                    >GUESBOOK</Marquee
+                <marquee scrollamount="10" behavior="alternate"
+                    >GUESBOOK</marquee
                 >
                 <img src="/star.gif" alt="star" />
             </div>
@@ -191,7 +188,7 @@
                 </tr>
                 <tr>
                     <td align="center">
-                        <div class="nav-links">
+                        <nav class="nav-links">
                             <a href="/" class="nav-link">[HOME]</a>
                             <span class="nav-divider">★</span>
                             <a href="/random" class="nav-link">[RANDOM]</a>
@@ -201,7 +198,7 @@
                             <a href="/about" class="nav-link">[ABOUT]</a>
                             <span class="nav-divider">★</span>
                             <a href="/settings" class="nav-link">[SETTINGS]</a>
-                        </div>
+                        </nav>
                     </td>
                 </tr>
             </tbody>
@@ -217,7 +214,12 @@
             <tbody>
                 <tr>
                     <td>
-                        <form onsubmit={(e) => { e.preventDefault(); submitEntry(); }}>
+                        <form
+                            onsubmit={(e) => {
+                                e.preventDefault();
+                                submitEntry();
+                            }}
+                        >
                             <table
                                 cellpadding="5"
                                 style="margin:auto; width: 300px;"
@@ -337,6 +339,7 @@
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
                                 src="/lesbian.png"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -345,6 +348,7 @@
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
                                 src="/hicolor.gif"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -353,6 +357,7 @@
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
                                 src="/transnow2.gif"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -361,6 +366,7 @@
                                 alt="netscape"
                                 width="88"
                                 height="31"
+                                loading="lazy"
                             /></td
                         >
                     </tr>
@@ -368,10 +374,10 @@
             </table>
         </div>
 
-        <div class="footer">
+        <footer class="footer">
             <p>© 1vers1on. all rights reserved.</p>
             <p class="small-gray-text">powered by trans catgirl whimpering</p>
-        </div>
+        </footer>
     </center>
 </div>
 

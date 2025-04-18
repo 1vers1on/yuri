@@ -6,10 +6,10 @@
     import { goto } from "$app/navigation";
     import Grid from "$lib/components/grid.svelte";
     import List from "$lib/components/list.svelte";
-    import Marquee from "$lib/components/marquee.svelte";
+    
 
     let { data } = $props();
-    
+
     interface PostResult {
         id: string;
         filename: string;
@@ -191,21 +191,20 @@
 
 <div class="page-container">
     <center>
-        <div class="header-banner">
+        <header class="header-banner">
             <div class="blink">
-                <span class="star red">★</span><span class="star yellow"
-                    >★</span
+                <span class="star red">★</span><span class="star yellow">★</span
                 ><span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span><span class="star yellow"
                     >★</span
-                ><span class="star red">★</span></div
-            >
-        </div>
+                ><span class="star red">★</span>
+            </div>
+        </header>
 
         <h1>
             <div class="title-thingy">
                 <img src="/star.gif" alt="star" />
-                <Marquee scrollamount="10" behavior="alternate">RESULTS</Marquee
+                <marquee scrollamount="10" behavior="alternate">RESULTS</marquee
                 >
                 <img src="/star.gif" alt="star" />
             </div>
@@ -233,7 +232,7 @@
                 </tr>
                 <tr>
                     <td align="center">
-                        <div class="nav-links">
+                        <nav class="nav-links">
                             <a href="/" class="nav-link">[HOME]</a>
                             <span class="nav-divider">★</span>
                             <a href="/random" class="nav-link">[RANDOM]</a>
@@ -243,7 +242,7 @@
                             <a href="/about" class="nav-link">[ABOUT]</a>
                             <span class="nav-divider">★</span>
                             <a href="/settings" class="nav-link">[SETTINGS]</a>
-                        </div>
+                        </nav>
                     </td>
                 </tr>
             </tbody>
@@ -337,6 +336,7 @@
                                 title="lesbi"
                                 style="image-rendering: pixelated;"
                                 src="/lesbian.png"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -345,6 +345,7 @@
                                 title="hicolor"
                                 style="image-rendering: pixelated;"
                                 src="/hicolor.gif"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -353,6 +354,7 @@
                                 title="trans rights"
                                 style="image-rendering: pixelated;"
                                 src="/transnow2.gif"
+                                loading="lazy"
                             /></td
                         >
                         <td
@@ -361,6 +363,7 @@
                                 alt="netscape"
                                 width="88"
                                 height="31"
+                                loading="lazy"
                             /></td
                         >
                     </tr>
@@ -368,10 +371,10 @@
             </table>
         </div>
 
-        <div class="footer">
+        <footer class="footer">
             <p>© 1vers1on. all rights reserved.</p>
             <p class="small-gray-text">powered by trans catgirl whimpering</p>
-        </div>
+        </footer>
     </center>
 </div>
 
