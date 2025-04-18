@@ -24,7 +24,10 @@ export async function refreshAccessToken(): Promise<void> {
     accessTokenStore.set(data.accessToken);
 }
 
-export async function loginUser(username: string, password: string): Promise<void> {
+export async function loginUser(
+    username: string,
+    password: string,
+): Promise<void> {
     const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {

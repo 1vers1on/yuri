@@ -3,7 +3,7 @@
     import { goto } from "$app/navigation";
     import Grid from "$lib/components/grid.svelte";
     import { getUserFavorites } from "$lib/api.js";
-    
+
     let { data } = $props();
 
     let searchQuery = $state("");
@@ -174,6 +174,23 @@
         }
     });
 </script>
+
+<svelte:head>
+    <script type="application/ld+json">
+    {JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://yuri.liminal.moe",
+        "name": "Yuri Archive",
+        "description": "The largest collection of yuri artwork online",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://yuri.liminal.moe/results?tags={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    })}
+    </script>
+</svelte:head>
 
 <div class="page-container">
     <center>

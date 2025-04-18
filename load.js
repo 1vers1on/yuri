@@ -1,4 +1,3 @@
-// load-yuri.js
 import { PrismaClient } from "./generated/prisma/client.js";
 import fs from "fs/promises";
 import path from "path";

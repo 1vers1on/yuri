@@ -9,7 +9,6 @@
         isPostFavorite,
     } from "$lib/api";
     import { favorites } from "$lib/globalState";
-    
 
     const { data } = $props();
 
@@ -93,16 +92,62 @@
 
 <svelte:head>
     {#if !notFound && post}
+        <title>{post.tags.slice(0, 3).join(", ")} - Yuri Archive</title>
+        <meta
+            name="description"
+            content={post.description ||
+                `Yuri artwork featuring ${post.tags.slice(0, 5).join(", ")}`}
+        />
+        <meta name="keywords" content={post.tags.join(", ")} />
+
+        <meta
+            property="og:title"
+            content={`${post.tags.slice(0, 3).join(", ")} - Yuri Archive`}
+        />
+        <meta
+            property="og:description"
+            content={post.description ||
+                `Yuri artwork featuring ${post.tags.slice(0, 5).join(", ")}`}
+        />
+        <meta property="og:type" content="image" />
+        <meta
+            property="og:url"
+            content={`https://yuri.liminal.moe/post/${post.id}`}
+        />
+        <meta property="og:image" content={getFullImageUrl(post.filename)} />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+            name="twitter:title"
+            content={`${post.tags.slice(0, 3).join(", ")} - Yuri Archive`}
+        />
+        <meta
+            name="twitter:description"
+            content={post.description ||
+                `Yuri artwork featuring ${post.tags.slice(0, 5).join(", ")}`}
+        />
+        <meta name="twitter:image" content={getFullImageUrl(post.filename)} />
+
+        <link
+            rel="canonical"
+            href={`https://yuri.liminal.moe/post/${post.id}`}
+        />
+
         <script type="application/ld+json">
         {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ImageObject",
-            "name": `YURI ARCHIVE - ${post.tags.join(", ")}`,
-            "description": post.description || `Yuri image with tags: ${post.tags.join(", ")}`,
+            "name": `Yuri Archive: ${post.tags.slice(0, 3).join(", ")}`,
+            "description": post.description || `Yuri artwork with tags: ${post.tags.join(", ")}`,
             "contentUrl": getFullImageUrl(post.filename),
             "datePublished": post.uploadDate || new Date().toISOString(),
-            "author": post.author ? { "@type": "Person", "name": post.author } : undefined,
-            "keywords": post.tags.join(", ")
+            "author": post.artist ? { "@type": "Person", "name": post.artist } : undefined,
+            "keywords": post.tags.join(", "),
+            "isPartOf": {
+                "@type": "WebSite",
+                "name": "Yuri Archive",
+                "url": "https://yuri.liminal.moe"
+            }
         })}
         </script>
     {/if}
@@ -199,6 +244,7 @@
                         alt="Post"
                         class="post-image"
                         style="image-rendering: auto !important;"
+                        loading="eager"
                     />
                 </div>
 

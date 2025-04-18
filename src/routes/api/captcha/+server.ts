@@ -1,4 +1,4 @@
-import { error, json } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
 import { generateCaptcha, validateCaptcha } from "$lib/server/captcha";
 
 export async function GET() {
@@ -11,13 +11,13 @@ export async function POST({ request }) {
     const { token, text } = await request.json();
 
     if (!token || !text) {
-        throw error(400, "Missing token or text");
+        return new Response("Missing token or text", { status: 400 });
     }
 
     const isValid = validateCaptcha(token, text);
 
     if (!isValid) {
-        throw error(400, "Invalid captcha");
+        return new Response("Invalid captcha", { status: 400 });
     }
 
     return json({ success: true });

@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { writable } from "svelte/store";
-    
 
     type Entry = {
         id: number;
@@ -26,16 +25,6 @@
 
     async function loadEntries() {
         try {
-            // add a fake entry for testing
-            entries.set([
-                {
-                    id: 1,
-                    name: "test",
-                    message: "this is a test entry",
-                    createdAt: new Date().toISOString(),
-                },
-            ]);
-
             loading = true;
             const res = await fetch("/api/guestbook");
             if (!res.ok)
@@ -79,24 +68,6 @@
                     throw new Error(`Failed to submit entry: ${result.status}`);
                 }
             }
-
-            // await fetch("/api/captcha", {
-            //     method: "POST",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify({ token: captchaToken,
-            // });
-
-            // await fetch(
-            //     "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-            //     {
-            //         method: "POST",
-            //         headers: { "Content-Type": "application/json" },
-            //         body: JSON.stringify({
-            //             secret: "0x4AAAAAABM5gZ1E3NqJyBqJ",
-            //             response: captchaToken,
-            //         }),
-            //     },
-            // );
 
             const res = await fetch("/api/guestbook", {
                 method: "POST",
@@ -148,8 +119,7 @@
     <center>
         <header class="header-banner">
             <div class="blink">
-                <span class="star red">★</span><span class="star yellow"
-                    >★</span
+                <span class="star red">★</span><span class="star yellow">★</span
                 ><span class="star green">★</span> YURI ARCHIVE
                 <span class="star green">★</span><span class="star yellow"
                     >★</span

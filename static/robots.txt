@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+Disallow: /settings
+
+# Disallow high-load dynamic paths
+Disallow: /api/
+Disallow: /search?*
+Disallow: /*?preview=true
+
+# Prevent crawling of paginated content except in sitemap
+Disallow: /*?page=*
+Allow: /sitemap.xml?page=*
+
+# Crawl delay for better server performance
+Crawl-delay: 1
+
+# Main sitemap index
+Sitemap: https://yuri.liminal.moe/sitemap.xml

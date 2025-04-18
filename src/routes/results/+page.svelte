@@ -6,7 +6,6 @@
     import { goto } from "$app/navigation";
     import Grid from "$lib/components/grid.svelte";
     import List from "$lib/components/list.svelte";
-    
 
     let { data } = $props();
 
