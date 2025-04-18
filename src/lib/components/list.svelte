@@ -28,7 +28,7 @@
         >
             <p class="result-title">{result.artist}</p>
             <img
-                src={"https://cdn.liminal.moe/" + result.filename}
+                src={"https://static.liminal.moe/yuri/output_images/" + result.filename}
                 alt={result.artist}
                 class="result-image"
                 style="image-rendering: auto !important;"
